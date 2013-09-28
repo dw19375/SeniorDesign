@@ -1,0 +1,75 @@
+\pagebreak
+\section{Requirements and Verification Procedures}
+%
+% Central Control Requirements
+%
+\subsection{Central Control Unit}
+\begin{table}[htbp]
+\begin{tabular}{|p{0.46\textwidth}|p{0.46\textwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The unit must send the appropriate control signals to the HVAC system. & The appropriate system (heating or A/C) should be activated as necessary to control the environmental temperature.\\
+\hline
+The system will control the temperature of the priority rooms such that the temperature index is within $\pm 1.5^{\circ}{\rm C}$. & The temperature index of the priority rooms should be within the specified range.\\
+\hline
+The system will control the temperature of the non-priority rooms such that the temperature index is within $\pm 3.5^{\circ}{\rm C}$. & The temperature index of the non-priority rooms should be within the specified range.\\
+\hline
+The unit must receive the data from the individual sensor units. & The unit should take specified measures to control the temperature of the rooms.\\
+\hline
+The unit will send commands to the vent control units to open and close the vents as necessary to control the climate in each room. & The vent control units should open or close as directed by the central control unit.\\
+\hline
+The unit will display the desired temperature index. & The unit should display the user set temperature index. \\
+\hline
+The unit will have manual control to set a priority room and adjust the desired temperature. & The desired temperature should be displayed.\\
+\hline
+{\it (If time permits)}
+The unit will connect to a wireless network (802.11) to interface with a PC to set the desired temperature index and priority rooms. & The unit should acknowledge the packets sent to it over the network and adjust the climate accordingly. \\
+\hline
+\end{tabular}
+\caption{Requirements and verification procedures for central control unit.}
+\label{tab:mainreq}
+\end{table}
+\pagebreak
+
+%
+% Temperature sensing unit requirements
+%
+\subsection{Temperature Sensing Unit}
+\begin{table}[htbp]
+\begin{tabular}{|p{0.46\textwidth}|p{0.46\textwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The unit will periodically read the temperature of its local environment within $\pm 0.5^{\circ}{\rm C}$. & The temperature output from the unit should correspond to the temperature of the local environment within the specified tolerance.\\
+\hline
+The unit will periodically read the relative humidity of its local environment within $\pm 5\%$ relative humidity. & The humidity output from the unit should correspond to the relative humidity of the local environment within the specified tolerance.\\
+\hline
+The unit will periodically broadcast the temperature and humidity data on the network on a regular interval. & The data should be transmitted on the network at a regular interval.\\
+\hline
+\end{tabular}
+\caption{Requirements and verification procedures for temperature sensing unit.}
+\label{tab:tempreq}
+\end{table}
+
+%
+% Vent Control Requirements
+%
+\subsection{Vent Control Unit}
+\begin{table}[htbp]
+\begin{tabular}{|p{0.46\textwidth}|p{0.46\textwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The unit must be able to open and close a vent with a motor. & The motor should turn by a sufficient amount to open and close the vent, but not enough to cause damage to the motor.\\
+\hline
+The unit must receive commands from the network to open and close the vent. & The vent should open or close when the respective command is received from the central control unit. \\
+\hline
+
+\end{tabular}
+\caption{Requirements and verification procedures for vent control unit.}
+\label{tab:ventreq}
+\end{table}
+
+\subsection{Tolerance Analysis}
+The accuracy of the temperature sensor in the temperature sensing unit is critical to the performance of the system.  The accuracy will be determined by comparing the output of the temperature sensor to that of a thermometer with a known error over a period of seven days.  If the error of the temperature sensor is not within specifications, the analysis will fail.
