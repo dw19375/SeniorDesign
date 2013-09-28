@@ -1,0 +1,62 @@
+\section{Requirements and Verifications}
+\subsection{Remote Temperature Sensor}
+\subsubsection{Power Supply}
+%\begin{table}[htbp]
+\begin{tabular}{|p{0.46\textwidth}|p{0.46\textwidth}|}
+\hline
+\multicolumn{1}{|c|}{Power Supply Requirements} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+Power outlet must supply $120VAC \pm 10\%$ to the 5V power converter. & Use Voltmeter to check wall outlet for correct RMS voltage level.\\
+\hline
+Power Converter voltage output lies between LDO input voltage tolerance. $5-20VDC$ input requirement on LDO. & Use Voltmeter to check that output of power converter lies in tolerable range.\\
+\hline
+LDO output must be $3.3VDC \pm 5\%$ for components.\newline LDO current output must be less than XA during circuit operation per XXXX datasheet maximum current output. & Use oscilloscope to monitor LDO output and ensure that output is properly regulated to 3.3VDC.  After verifying voltage is within limits, measure current using oscilloscope current probe or ammeter with the LDO under load of components.\\
+\hline
+\end{tabular}
+% \caption{Requirements and verification procedures for the Remote Sensor's Power Supply.}
+% \label{tab:powersupplyreq}
+% \end{table}
+
+%\begin{table}[htbp]
+\subsubsection{Microcontroller}
+\begin{tabular}{|p{0.46\textwidth}|p{0.46\textwidth}|}
+\hline
+\multicolumn{1}{|c|}{Microcontroller Requirements} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+Input voltage to microcontroller is 3.3VDC on correct pins.  & Use voltmeter to measure voltage at pins 1, and 16. \\
+\hline
+Microcontroller properly grounded. & Check board traces on pins 5 and 20 for continuity to power supply negative. \\
+\hline
+Temperature/Humidity sensor connected to digital input pins & Check traces/connections to ensure temperature sensor connected to pin 12. \\
+\hline
+Temperature/Humidity sensor messages properly received by microcontroller. & Monitor the messages sent by the microcontroller over Wi-Fi.  The messages will contain the digital data received by the temperature sensor. Bump data with expected data.\\
+\hline
+XBee control and serial connections properly connected. & Check connections and ensure pins properly coded to match specification on schematic and data sheets.\\
+\hline
+MCU properly controls Xbee Wi-Fi. & Check that Wi-Fi is operating properly. Check that Xbee is sending messages by monitoring the port and reading the stream.\\
+\hline
+\end{tabular}
+% \caption{Requirements and verification procedures for the Remote Sensor's Microcontroller.}
+% \label{tab:microcontrollerreq}
+% \end{table}
+
+% \begin{table}[htbp]
+\subsubsection{XBee Wifi Requirements}
+\begin{tabular}{|p{0.46\textwidth}|p{0.46\textwidth}|}
+\hline
+\multicolumn{1}{|c|}{XBee Requirements} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+Xbee has 3.3VDC power input from power supply. & Check pin 1 for correct input voltage.\\
+\hline
+Xbee properly grounded. & Check board traces for pins 10 and 17 such that they are continuous to power supply negative. \\
+\hline
+XBee is transmitting. & Use a spectrum analyzer with an antenna connected. Monitor 2.4GHz while holding the XBee near the antenna; signal strength should be noticeably higher if device is transmitting.\\
+\hline
+Check that Xbee properly obtains its static IP address from local area network. & Use an accessable router to monitor connections.\\
+\hline
+Check that Xbee properly messages desired IP address. & Set up the XBee to message a local computer.  Have the computer listen for messages and review the incoming data.\\
+\hline
+\end{tabular}
+% \caption{Requirements and verification procedures for the Remote Sensor's Xbee Wi-Fi.}
+% \label{tab:xbeereq}
+% \end{table}
