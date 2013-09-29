@@ -1,16 +1,21 @@
+\newlength{\mytabwidth}
+\setlength{\mytabwidth}{0.5\textwidth}
+\addtolength{\mytabwidth}{-2\tabcolsep}
+\addtolength{\mytabwidth}{-3\arrayrulewidth}
+
 \section{Requirements and Verifications}
 \subsection{Remote Temperature Sensor}
 \subsubsection{Power Supply}
 %\begin{table}[htbp]
-\begin{tabular}{|p{0.46\textwidth}|p{0.46\textwidth}|}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
 \multicolumn{1}{|c|}{Power Supply Requirements} & \multicolumn{1}{|c|}{Verification} \\
 \hline\hline
-Power outlet must supply $120VAC \pm 10\%$ to the 5V power converter. & Use Voltmeter to check wall outlet for correct RMS voltage level.\\
-\hline
-Power Converter voltage output lies between LDO input voltage tolerance. $5-20VDC$ input requirement on LDO. & Use Voltmeter to check that output of power converter lies in tolerable range.\\
-\hline
-LDO output must be $3.3VDC \pm 5\%$ for components.\newline LDO current output must be less than XA during circuit operation per XXXX datasheet maximum current output. & Use oscilloscope to monitor LDO output and ensure that output is properly regulated to 3.3VDC.  After verifying voltage is within limits, measure current using oscilloscope current probe or ammeter with the LDO under load of components.\\
+% Power outlet must supply $120VAC \pm 10\%$ to the 5V power converter. & Use Voltmeter to check wall outlet for correct RMS voltage level.\\
+% \hline
+% Power Converter voltage output lies between LDO input voltage tolerance. $5-20VDC$ input requirement on LDO. & Use Voltmeter to check that output of power converter lies in tolerable range.\\
+% \hline
+The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input of 5\,V and an output of 500\,mA. & Measure the output voltage with a load current of 500\mamps\ ($6.6\ohms$ at 3.3\volts) and ensure it meets specifications.\\
 \hline
 \end{tabular}
 % \caption{Requirements and verification procedures for the Remote Sensor's Power Supply.}
@@ -19,7 +24,7 @@ LDO output must be $3.3VDC \pm 5\%$ for components.\newline LDO current output m
 
 %\begin{table}[htbp]
 \subsubsection{Microcontroller}
-\begin{tabular}{|p{0.46\textwidth}|p{0.46\textwidth}|}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
 \multicolumn{1}{|c|}{Microcontroller Requirements} & \multicolumn{1}{|c|}{Verification} \\
 \hline\hline
@@ -42,7 +47,7 @@ MCU properly controls Xbee Wi-Fi. & Check that Wi-Fi is operating properly. Chec
 
 % \begin{table}[htbp]
 \subsubsection{XBee Wifi Requirements}
-\begin{tabular}{|p{0.46\textwidth}|p{0.46\textwidth}|}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
 \multicolumn{1}{|c|}{XBee Requirements} & \multicolumn{1}{|c|}{Verification} \\
 \hline\hline
