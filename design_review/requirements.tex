@@ -4,64 +4,60 @@
 \addtolength{\mytabwidth}{-3\arrayrulewidth}
 
 \section{Requirements and Verifications}
-\subsection{Remote Temperature Sensor}
+\subsection{Remote Temperature Sensor Unit}
 \subsubsection{Power Supply}
-%\begin{table}[htbp]
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Power Supply Requirements} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
 \hline\hline
-% Power outlet must supply $120VAC \pm 10\%$ to the 5V power converter. & Use Voltmeter to check wall outlet for correct RMS voltage level.\\
-% \hline
-% Power Converter voltage output lies between LDO input voltage tolerance. $5-20VDC$ input requirement on LDO. & Use Voltmeter to check that output of power converter lies in tolerable range.\\
-% \hline
 The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input of 5\,V and an output of 500\,mA. & Measure the output voltage with a load current of 500\mamps\ ($6.6\ohms$ at 3.3\volts) and ensure it meets specifications.\\
 \hline
 \end{tabular}
-% \caption{Requirements and verification procedures for the Remote Sensor's Power Supply.}
-% \label{tab:powersupplyreq}
-% \end{table}
 
-%\begin{table}[htbp]
-\subsubsection{Microcontroller}
+\subsubsection{Sensor Data Collection}
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Microcontroller Requirements} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
 \hline\hline
-Input voltage to microcontroller is 3.3VDC on correct pins.  & Use voltmeter to measure voltage at pins 1, and 16. \\
+The MCU will read the ambient temperature data from an external sensor via a 1-wire protocol.  &
+Ensure that the MCU communicates with the temperature sensor and a valid temperature value is read. \\
 \hline
-Microcontroller properly grounded. & Check board traces on pins 5 and 20 for continuity to power supply negative. \\
+The MCU will convert the raw temperature data, as needed, to tenths of degrees Celsius (e.g., $T\times10$). &
+Ensure the proper conversion of the raw data is taking place. \\
 \hline
-Temperature/Humidity sensor connected to digital input pins & Check traces/connections to ensure temperature sensor connected to pin 12. \\
+The MCU will read the calibration values for the humidity sensor via the I$^2$C bus, if needed. &
+Ensure that the MCU communicates with the humidity sensor and that valid calibration values are read. \\
 \hline
-Temperature/Humidity sensor messages properly received by microcontroller. & Monitor the messages sent by the microcontroller over Wi-Fi.  The messages will contain the digital data received by the temperature sensor. Bump data with expected data.\\
-\hline
-XBee control and serial connections properly connected. & Check connections and ensure pins properly coded to match specification on schematic and data sheets.\\
-\hline
-MCU properly controls Xbee Wi-Fi. & Check that Wi-Fi is operating properly. Check that Xbee is sending messages by monitoring the port and reading the stream.\\
+The MCU will read the ambient relative humidity from the humidity sensor. &
+Ensure the MCU reads the output of the humidity sensor and that a valid relative humidity is read. \\
 \hline
 \end{tabular}
-% \caption{Requirements and verification procedures for the Remote Sensor's Microcontroller.}
-% \label{tab:microcontrollerreq}
-% \end{table}
 
-% \begin{table}[htbp]
-\subsubsection{XBee Wifi Requirements}
+\subsubsection{Sensor Accuracy}
+{\em The exact accuracy requirements of the sensors, and hence the verification procedures, are not critical to the system's performance, and are meant only as general guidelines. }
+
+\noindent
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{XBee Requirements} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
 \hline\hline
-Xbee has 3.3VDC power input from power supply. & Check pin 1 for correct input voltage.\\
+The temperature sensor should output the ambient temperature with an error of no more than $\pm0.5^\circ\,$C over a range of 10--32$^\circ$\,C. &
+The data sheet of the temperature sensor should indicate an accuracy within specifications. \\
 \hline
-Xbee properly grounded. & Check board traces for pins 10 and 17 such that they are continuous to power supply negative. \\
-\hline
-XBee is transmitting. & Use a spectrum analyzer with an antenna connected. Monitor 2.4GHz while holding the XBee near the antenna; signal strength should be noticeably higher if device is transmitting.\\
-\hline
-Check that Xbee properly obtains its static IP address from local area network. & Use an accessable router to monitor connections.\\
-\hline
-Check that Xbee properly messages desired IP address. & Set up the XBee to message a local computer.  Have the computer listen for messages and review the incoming data.\\
+The humidity sensor should output the ambient relative humidity with an error of no more than $\pm 5$\% RH. over a range of 10\%--90\%\ RH. &
+The data sheet of the RH sensor should indicate an accuracy within specifications. \\
 \hline
 \end{tabular}
-% \caption{Requirements and verification procedures for the Remote Sensor's Xbee Wi-Fi.}
-% \label{tab:xbeereq}
-% \end{table}
+
+\subsubsection{Network}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The MCU will initialize the wireless tranceiver with a pre-programmed SSID, password, and static IP address. &
+Ensure that the wireless tranceiver is able to associate with the router. \\
+\hline
+The MCU will periodically transmit a packet to the central control unit containing the most recent temperature and humidity data along with a unique identification. &
+Ensure that a packet containing the necessary data is sent to the central control unit. \\
+\hline
+\end{tabular}
