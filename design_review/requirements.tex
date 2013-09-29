@@ -65,6 +65,15 @@ Ensure that a packet containing the necessary data is sent to the central contro
 \end{tabular}
 
 \subsection{Vent Control Unit}
+\subsubsection{Power Supply}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input of 5\,V and an output of 500\,mA. & Measure the output voltage with a load current of 500\mamps\ ($6.6\ohms$ at 3.3\volts) and ensure it meets specifications.\\
+\hline
+\end{tabular}
+
 \subsubsection{Servo Control}
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
@@ -72,6 +81,7 @@ Ensure that a packet containing the necessary data is sent to the central contro
 \hline\hline
 The MCU shall cause the servo motor to open the vent upon receipt of the appropriate packet. &
 Send the appropriate packet to the vent controller and the vent should open. \\
+\hline
 The MCU shall cause the servo motor to close the vent upon receipt of the appropriate packet. &
 Send the appropriate packet to the vent controller and the vent should close. \\
 \hline
@@ -124,5 +134,65 @@ Send a command packet to a PC and listen for the initial packet and three resent
 \hline
 When the MCU receives a command packet from the user, an acknowledgment will be sent to the sender of the packet. &
 Send a command packet to the central control unit and listen for an ACK packet. \\
+\hline
+\end{tabular}
+
+\subsubsection{User Interface}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The MCU will listen for packets from the network from the user.  These packets must contain the sender's IP address, the desired temperature, whether heating or air conditioning is used, and the desired priority room.  These packets must be acknowledged. &
+Send a packet to the central control unit.  Ensure that the correct data is set internally and that an ACK is sent. \\
+\hline
+The LCD will display the desired temperature, the current heat index of the priority room, and the priority room number. &
+Ensure that the correct data is displayed on the LCD. \\
+\hline
+\end{tabular}
+
+\subsubsection{HVAC Control Logic}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+% For each sensor unit, the apparent temperature will be calculated and used for HVAC controls, and filtered to reduce the effect of variations. &
+% Ensure that HVAC control is based on the apparent temperature. \\
+% \hline
+If heating is selected by the user and the apparent temperature at a sensor unit is above the threshold for the priority room, the corresponding vent will be closed. &
+Ensure that the vent is closed if the apparent temperature is above the threshold for the priority room. \\
+\hline
+If A/C is selected by the user and the apparent temperature at a sensor unit is below the threshold for the priority room, the corresponding vent will be closed. &
+Ensure the vent is closed if the apparent temperature is below the threshold for the priority room. \\
+\hline
+If heating is selected by the user and the apparent temperature at a sensor unit is below the threshold for that room, the corresponding vent will be opened. &
+Ensure the vent is opened if the apparent temperature is below the threshold for the room. \\
+\hline
+If A/C is selected by the user and the apparent temperature at a sensor unit is above the threshold for that room, the corresponding vent will be opened. &
+Ensure the vent is opened if the apparent temperature is above the threshold for the room. \\
+\hline
+If heating is selected by the user and the apparent temperature in any room is below the threshold for that room, the central control unit will turn the heating on. &
+Ensure the heating is on when the apparent temperature in any room is below the threshold for that room. \\
+\hline
+If the heating is selected by the user and the apparent temperature in every room is at or above the threshold for the priority room, the heating will be turned off. &
+Ensure the heating is off when the apparent temperature in all rooms is above the threshold for the priority room. \\
+\hline
+If A/C is selected by the user and the apparent temperature in any room is above the threshold for that room, the central control unit will turn the A/C on. &
+Ensure the A/C is on when the apparent temperature in any room is above the threshold for that room. \\
+\hline
+If the A/C is selected by the user and the apparent temperature in every room is at or below the threshold for the priority room, the A/C will be turned off. &
+Ensure the A/C is off when the apparent temperature in all rooms is below the threshold for the priority room. \\
+\hline
+\end{tabular}
+
+\subsubsection{HVAC Interface}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+To activate the heating, the central control unit will output the appropriate signal to the HVAC system to activate the heating, and after a determined time, send the appropriate signal to activate the fan. &
+Ensure that the heating is activated when appropriate. \\
+\hline
+To activate the A/C, the central control unit will output the appropriate signal to the HVAC system to activate the A/C, and after a determined time, send the appropriate signal to activate the fan. &
+Ensure that the A/C is activated when appropriate. \\
 \hline
 \end{tabular}
