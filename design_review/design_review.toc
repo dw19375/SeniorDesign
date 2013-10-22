@@ -2,24 +2,24 @@
 \contentsline {subsection}{\numberline {1.1}Statement of Purpose}{2}
 \contentsline {subsection}{\numberline {1.2}Goals}{2}
 \contentsline {subsection}{\numberline {1.3}Functions}{2}
-\contentsline {subsection}{\numberline {1.4}Features}{2}
+\contentsline {subsection}{\numberline {1.4}Features}{3}
 \contentsline {section}{\numberline {2}Design}{3}
 \contentsline {subsection}{\numberline {2.1}Block Diagrams}{3}
-\contentsline {subsection}{\numberline {2.2}Block Descriptions}{3}
-\contentsline {subsubsection}{\numberline {2.2.1}Overall System Summary}{3}
+\contentsline {subsection}{\numberline {2.2}Block Descriptions}{4}
+\contentsline {subsubsection}{\numberline {2.2.1}Overall System Summary}{4}
 \contentsline {paragraph}{\numberline {2.2.1.1}Temperature Sensors}{4}
 \contentsline {paragraph}{\numberline {2.2.1.2}Humidity Sensors}{4}
-\contentsline {paragraph}{\numberline {2.2.1.3}Central HVAC}{4}
-\contentsline {subsubsection}{\numberline {2.2.2}Main Control Panel}{4}
+\contentsline {paragraph}{\numberline {2.2.1.3}Central HVAC}{5}
+\contentsline {subsubsection}{\numberline {2.2.2}Main Control Panel}{5}
 \contentsline {paragraph}{\numberline {2.2.2.1}Main Panel Power Supply}{5}
-\contentsline {paragraph}{\numberline {2.2.2.2}Main Panel Microcontroller}{5}
+\contentsline {paragraph}{\numberline {2.2.2.2}Main Panel Microcontroller}{6}
 \contentsline {paragraph}{\numberline {2.2.2.3}XBee Wi-Fi Transceiver}{6}
 \contentsline {subsubsection}{\numberline {2.2.3}Remote Temperature Sensors}{6}
 \contentsline {paragraph}{\numberline {2.2.3.1}Remote Temperature Sensor Power Supply}{6}
 \contentsline {paragraph}{\numberline {2.2.3.2}Remote Temperature Sensor Microcontroller}{6}
 \contentsline {paragraph}{\numberline {2.2.3.3}Remote Temperature Sensor XBee Transceiver}{6}
 \contentsline {subsubsection}{\numberline {2.2.4}Vent Controllers}{6}
-\contentsline {paragraph}{\numberline {2.2.4.1}Vent Controller Battery}{6}
+\contentsline {paragraph}{\numberline {2.2.4.1}Vent Controller Battery}{7}
 \contentsline {paragraph}{\numberline {2.2.4.2}Vent Controller Microcontroller}{7}
 \contentsline {paragraph}{\numberline {2.2.4.3}Vent Controller XBee Transceiver}{7}
 \contentsline {paragraph}{\numberline {2.2.4.4}Vent Controller Actuator}{7}
@@ -27,20 +27,33 @@
 \contentsline {subsubsection}{\numberline {2.3.1}Remote Temperature Sensor Schematics}{7}
 \contentsline {subsection}{\numberline {2.4}Simulations and Calculations}{8}
 \contentsline {section}{\numberline {3}Requirements and Verifications}{8}
-\contentsline {subsection}{\numberline {3.1}Remote Temperature Sensor}{8}
+\contentsline {subsection}{\numberline {3.1}Remote Temperature Sensor Unit}{8}
 \contentsline {subsubsection}{\numberline {3.1.1}Power Supply}{8}
-\contentsline {subsubsection}{\numberline {3.1.2}Microcontroller}{8}
-\contentsline {subsubsection}{\numberline {3.1.3}XBee Wifi Requirements}{9}
-\contentsline {subsection}{\numberline {3.2}Tolerance Analysis}{9}
-\contentsline {section}{\numberline {4}Cost Analysis}{9}
-\contentsline {subsection}{\numberline {4.1}Materials}{9}
-\contentsline {subsection}{\numberline {4.2}Labor}{10}
-\contentsline {subsection}{\numberline {4.3}Total}{10}
-\contentsline {section}{\numberline {5}Schedule}{11}
-\contentsline {subsection}{\numberline {5.1}Contingency Plan}{12}
-\contentsline {section}{\numberline {6}Ethics and Safety}{12}
-\contentsline {subsection}{\numberline {6.1}Ethics}{12}
-\contentsline {subsection}{\numberline {6.2}Safety}{12}
-\contentsline {section}{\numberline {7}Appendix}{12}
-\contentsline {subsection}{\numberline {7.1}References}{12}
-\contentsline {subsection}{\numberline {7.2}Extra Figures}{12}
+\contentsline {subsubsection}{\numberline {3.1.2}Sensor Data Collection}{8}
+\contentsline {subsubsection}{\numberline {3.1.3}Sensor Accuracy}{8}
+\contentsline {subsubsection}{\numberline {3.1.4}Network}{9}
+\contentsline {subsection}{\numberline {3.2}Vent Control Unit}{9}
+\contentsline {subsubsection}{\numberline {3.2.1}Power Supply}{9}
+\contentsline {subsubsection}{\numberline {3.2.2}Servo Control}{9}
+\contentsline {subsubsection}{\numberline {3.2.3}Network}{10}
+\contentsline {subsection}{\numberline {3.3}Main Control Unit}{10}
+\contentsline {subsubsection}{\numberline {3.3.1}Power Supply}{10}
+\contentsline {subsubsection}{\numberline {3.3.2}Local Sensor Data Collection}{10}
+\contentsline {subsubsection}{\numberline {3.3.3}Local Sensor Accuracy}{10}
+\contentsline {subsubsection}{\numberline {3.3.4}Network}{11}
+\contentsline {subsubsection}{\numberline {3.3.5}User Interface}{11}
+\contentsline {subsubsection}{\numberline {3.3.6}HVAC Control Logic}{12}
+\contentsline {subsubsection}{\numberline {3.3.7}HVAC Interface}{13}
+\contentsline {subsection}{\numberline {3.4}Tolerance Analysis}{13}
+\contentsline {section}{\numberline {4}Cost Analysis}{13}
+\contentsline {subsection}{\numberline {4.1}Materials}{13}
+\contentsline {subsection}{\numberline {4.2}Labor}{13}
+\contentsline {subsection}{\numberline {4.3}Total}{14}
+\contentsline {section}{\numberline {5}Schedule}{14}
+\contentsline {subsection}{\numberline {5.1}Contingency Plan}{15}
+\contentsline {section}{\numberline {6}Ethics and Safety}{15}
+\contentsline {subsection}{\numberline {6.1}Ethics}{15}
+\contentsline {subsection}{\numberline {6.2}Safety}{15}
+\contentsline {section}{\numberline {7}Appendix}{15}
+\contentsline {subsection}{\numberline {7.1}References}{15}
+\contentsline {subsection}{\numberline {7.2}Extra Figures}{15}

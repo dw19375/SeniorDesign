@@ -9,14 +9,15 @@
 #define LCD16_H_
 
 
-#include <msp430g2211.h>
+#include <msp430g2333.h>
 #define  EN BIT6
 #define  RS BIT7
 
 void waitlcd(unsigned int x);
 
 void lcdinit(void);
-void integerToLcd(int integer );
+unsigned char integerToLcd(int integer );
+unsigned char dec2ToLcd( int integer );
 void lcdData(unsigned char l);
 void prints(char *s);
 void gotoXy(unsigned char  x,unsigned char y);

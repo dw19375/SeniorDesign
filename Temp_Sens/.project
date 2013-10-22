@@ -3,6 +3,8 @@
 	<name>Temp_Sens</name>
 	<comment></comment>
 	<projects>
+		<project>lib1wire</project>
+		<project>liblcd</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

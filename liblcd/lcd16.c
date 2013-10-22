@@ -106,21 +106,93 @@ void gotoXy(unsigned char  x,unsigned char y)
   }
 
 }
-void integerToLcd(int integer )
-{
 
-	unsigned char thousands,hundreds,tens,ones;
+// Returns number of characters actually printed
+unsigned char integerToLcd( int integer )
+{
+	unsigned char thousands,hundreds,tens,ones, ret=1;
+
+	// Handle negative numbers
+	if( integer < 0 )
+	{
+		lcdData('-');
+		integer *= -1;
+		ret++;
+	}
+
+	// Limit to four digits
+	if( integer > 9999 )
+		integer = 9999;
+
 	thousands = integer / 1000;
 
-    lcdData(thousands + 0x30);
+	if( thousands )
+	{
+		lcdData(thousands + 0x30);
+		ret++;
+	}
 
-	 hundreds = ((integer - thousands*1000)-1) / 100;
+	hundreds = ((integer - thousands*1000)-1) / 100;
 
-	lcdData( hundreds + 0x30);
+	if( hundreds )
+	{
+		lcdData( hundreds + 0x30);
+		ret++;
+	}
+
 	tens=(integer%100)/10;
 
-	lcdData( tens + 0x30);
+	if( tens )
+	{
+		lcdData( tens + 0x30);
+		ret++;
+	}
+
+	// Always print ones digit.
 	ones=integer%10;
 
 	lcdData( ones + 0x30);
+
+	return ret;
+}
+
+/*
+ * Displays fractional part of fixed point integer as decimal
+ * The fractional part must be in the lowest 2 bits of the word passed in
+ * Will print up to two digits (three including the dot)
+ *
+ * returns number of characters printed
+ */
+unsigned char dec2ToLcd( int integer )
+{
+	// Always display the decimal point
+	lcdData('.');
+
+	// Make sure integer is positive
+	if( integer < 0 )
+		integer *= -1;
+
+	integer &= 0x03;		// Clear all but lowest two bits
+
+	switch( integer )
+	{
+		case 0x00:		// 0.00
+			lcdData('0');
+			lcdData('0');
+			break;
+		case 0x01:		// 0.25
+			lcdData('2');
+			lcdData('5');
+			break;
+		case 0x02:		// 0.5
+			lcdData('5');
+			lcdData('0');
+			break;
+		case 0x03:		// 0.75
+			lcdData('7');
+			lcdData('5');
+			break;
+	}
+
+	return 3;
 }
