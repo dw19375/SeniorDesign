@@ -1,5 +1,6 @@
-/* LCD 20x4
- * created by Jeff Lawrence for ECE 445 senior design project
+/*
+ * LCD 20x4
+ * Created by Jeff Lawrence for ECE 445 senior design project
  */
 
 #ifndef LCD20x4_H_
@@ -13,8 +14,11 @@
 void waitlcd(unsigned int x);
 
 void lcdinit(void);
-void integerToLcd(int integer );
+int integerToLcd(int integer );
+int dec2ToLcd( int integer );
 void lcdData(unsigned char l);
 void prints(char *s);
 void gotoXy(unsigned char  x,unsigned char y);
-#endif
+
+
+#endif /* LCD20x4_H_ */

@@ -6,7 +6,7 @@ CG_TOOL_ROOT := /opt/ti/ccsv5/tools/compiler/msp430_4.2.1
 
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
-"./lcd16.obj" \
+"./lcd20.obj" \
 
 -include ../makefile.init
 
@@ -108,7 +108,7 @@ endif
 all: liblcd.lib
 
 # Tool invocations
-liblcd.lib: $(OBJS)
+liblcd.lib: $(OBJS) $(OBJ_SRCS) $(LIB_SRCS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Archiver'
 	"/opt/ti/ccsv5/tools/compiler/msp430_4.2.1/bin/ar430" r "liblcd.lib" $(ORDERED_OBJS)
@@ -118,8 +118,8 @@ liblcd.lib: $(OBJS)
 # Other Targets
 clean:
 	-$(RM) $(MSP430_LIBRARY_OUTPUTS__QUOTED) "liblcd.lib"
-	-$(RM) "lcd16.pp" 
-	-$(RM) "lcd16.obj" 
+	-$(RM) "lcd20.pp" 
+	-$(RM) "lcd20.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

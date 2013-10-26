@@ -4,21 +4,21 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../lcd16.c 
+../lcd20.c 
 
 OBJS += \
-./lcd16.obj 
+./lcd20.obj 
 
 C_DEPS += \
-./lcd16.pp 
+./lcd20.pp 
 
 C_DEPS__QUOTED += \
-"lcd16.pp" 
+"lcd20.pp" 
 
 OBJS__QUOTED += \
-"lcd16.obj" 
+"lcd20.obj" 
 
 C_SRCS__QUOTED += \
-"../lcd16.c" 
+"../lcd20.c" 
 
 

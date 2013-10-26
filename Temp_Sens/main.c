@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "delay.h"
 #include "onewire.h"
-#include "lcd16.h"
+#include "lcd20.h"
 
 /*
  * main.c
@@ -17,15 +17,11 @@ int main(void) {
 	BCSCTL1 = CALBC1_8MHZ;
 	DCOCTL = CALDCO_8MHZ;
 
-	// For LCD
-	P1DIR = 0xFF;
-	P1OUT = 0x00;
-
 	ow.port_out = &P2OUT;
 	ow.port_in = &P2IN;
 	ow.port_ren = &P2REN;
 	ow.port_dir = &P2DIR;
-	ow.pin = BIT3;
+	ow.pin = BIT4;
 
 	// Initialize temp. sensor to 10-bit resolution
 	onewire_reset(&ow);

@@ -108,7 +108,7 @@ endif
 all: lib1wire.lib
 
 # Tool invocations
-lib1wire.lib: $(OBJS)
+lib1wire.lib: $(OBJS) $(OBJ_SRCS) $(LIB_SRCS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Archiver'
 	"/opt/ti/ccsv5/tools/compiler/msp430_4.2.1/bin/ar430" r "lib1wire.lib" $(ORDERED_OBJS)
