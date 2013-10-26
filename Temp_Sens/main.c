@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "delay.h"
 #include "onewire.h"
+#include "ds18b20.h"
 #include "lcd20.h"
 
 /*

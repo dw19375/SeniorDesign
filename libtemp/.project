@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Temp_Sens</name>
+	<name>libtemp</name>
 	<comment></comment>
 	<projects>
 		<project>lib1wire</project>
-		<project>liblcd</project>
-		<project>libtemp</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
