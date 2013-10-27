@@ -108,7 +108,7 @@ endif
 all: libtemp.lib
 
 dependents:
-	-cd /home/dan/dans_code/MSP430/workspace/lib1wire/Release && $(MAKE) clean all
+	-cd /home/dan/dans_code/MSP430/workspace/lib1wire/Release && $(MAKE) all
 
 # Tool invocations
 libtemp.lib: $(OBJS) /home/dan/dans_code/MSP430/workspace/lib1wire/Release/lib1wire.lib

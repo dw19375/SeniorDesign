@@ -61,7 +61,25 @@ void start_conversion()
  */
 void delay_temp_read()
 {
-	DELAY_MS( TEMP_READ_DELAY << precision );
+	// DELAY_MS requires a compile time constant for an argument.
+	// Someday, I'll implement this properly with timers.
+	switch ( precision )
+	{
+		case 0:
+			DELAY_MS( (int)(TEMP_READ_DELAY << 0) );
+			break;
+		case 1:
+			DELAY_MS( (int)(TEMP_READ_DELAY << 1) );
+			break;
+		case 2:
+			DELAY_MS( (int)(TEMP_READ_DELAY << 2) );
+			break;
+		case 3:
+			DELAY_MS( (int)(TEMP_READ_DELAY << 3) );
+			break;
+		default:
+			break;
+	}
 }
 
 /*
@@ -105,15 +123,11 @@ void set_precision( int prec )
 void read_scratchpad( uint8_t* buf )
 {
 	int i;
-
-	if( NULL != buf )
-	{
-		onewire_reset(&ow);
-		onewire_write_byte(&ow, 0xcc); // skip ROM command
-		onewire_write_byte(&ow, 0xbe); // read scratchpad command
-		for (i = 0; i < 9; i++)
-			buf[i] = onewire_read_byte(&ow);
-	}
+	onewire_reset(&ow);
+	onewire_write_byte(&ow, 0xcc); // skip ROM command
+	onewire_write_byte(&ow, 0xbe); // read scratchpad command
+	for (i = 0; i < 9; i++)
+		buf[i] = onewire_read_byte(&ow);
 }
 
 /*
@@ -123,12 +137,9 @@ void write_scratchpad( uint8_t* buf )
 {
 	int i;
 
-	if( NULL != buf )
-	{
-		onewire_reset(&ow);
-		onewire_write_byte(&ow, 0xcc); // skip ROM command
-		onewire_write_byte(&ow, 0x4E); // write scratchpad command
-		for (i = 2; i <= 4; i++)
-			onewire_write_byte(&ow, buf[i]);
-	}
+	onewire_reset(&ow);
+	onewire_write_byte(&ow, 0xcc); // skip ROM command
+	onewire_write_byte(&ow, 0x4E); // write scratchpad command
+	for (i = 2; i <= 4; i++)
+		onewire_write_byte(&ow, buf[i]);
 }
