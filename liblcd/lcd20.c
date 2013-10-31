@@ -214,3 +214,31 @@ int dec2ToLcd( int integer )
 
 	return 3;
 }
+
+int hex2Lcd( uint8_t n )
+{
+	uint8_t hi = (n & 0xF0) >> 4;
+	uint8_t lo =  n & 0x0F;
+
+	// Display upper nibble
+	if( hi <= 9)
+	{
+		lcdData( hi + 0x30 );	// Display number
+	}
+	else
+	{
+		lcdData( hi + 0x37 );	// Display uppercase letter
+	}
+
+	// Display lower nibble
+	if( lo <= 9)
+	{
+		lcdData( lo + 0x30 );	// Display number
+	}
+	else
+	{
+		lcdData( lo + 0x37 );	// Display uppercase letter
+	}
+
+	return 2;
+}
