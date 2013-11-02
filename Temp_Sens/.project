@@ -6,6 +6,7 @@
 		<project>lib1wire</project>
 		<project>liblcd</project>
 		<project>libtemp</project>
+		<project>libxbee</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

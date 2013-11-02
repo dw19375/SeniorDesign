@@ -47,6 +47,7 @@
 									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib1wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/liblcd}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libxbee}&quot;"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compilerID.ABI.557314793" name="Application binary interface [See 'General' page to edit] (--abi)" superClass="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compilerID.ABI" value="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compilerID.ABI.eabi" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compilerID.OPT_FOR_SPEED.7231597" name="Speed vs. size trade-offs (--opt_for_speed, -mf)" superClass="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compilerID.OPT_FOR_SPEED" value="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compilerID.OPT_FOR_SPEED.0" valueType="enumerated"/>
@@ -73,6 +74,8 @@
 									<listOptionValue builtIn="false" value="&quot;libc.a&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib1wire/Debug/lib1wire.lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/liblcd/Debug/liblcd.lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libtemp/Debug/libtemp.lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libxbee/Debug/libxbee.lib}&quot;"/>
 								</option>
 								<inputType id="com.ti.ccstudio.buildDefinitions.MSP430_4.2.exeLinker.inputType__CMD_SRCS.1230909517" name="Linker Command Files" superClass="com.ti.ccstudio.buildDefinitions.MSP430_4.2.exeLinker.inputType__CMD_SRCS"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.MSP430_4.2.exeLinker.inputType__CMD2_SRCS.1828691712" name="Linker Command Files" superClass="com.ti.ccstudio.buildDefinitions.MSP430_4.2.exeLinker.inputType__CMD2_SRCS"/>
@@ -86,6 +89,7 @@
 				<externalSettings containerId="lib1wire;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 				<externalSettings containerId="liblcd;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 				<externalSettings containerId="libtemp;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
+				<externalSettings containerId="libxbee;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 			</storageModule>
 		</cconfiguration>
 		<cconfiguration id="com.ti.ccstudio.buildDefinitions.MSP430.Release.1299562441">
@@ -131,6 +135,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib1wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/liblcd}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libtemp}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libxbee}&quot;"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compilerID.ABI.630867545" name="Application binary interface [See 'General' page to edit] (--abi)" superClass="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compilerID.ABI" value="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compilerID.ABI.eabi" valueType="enumerated"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compiler.inputType__C_SRCS.1718850394" name="C Sources" superClass="com.ti.ccstudio.buildDefinitions.MSP430_4.2.compiler.inputType__C_SRCS"/>
@@ -155,6 +160,7 @@
 									<listOptionValue builtIn="false" value="&quot;libc.a&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib1wire/Release/lib1wire.lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/liblcd/Release/liblcd.lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libtemp/Release/libtemp.lib}&quot;"/>
 								</option>
 								<inputType id="com.ti.ccstudio.buildDefinitions.MSP430_4.2.exeLinker.inputType__CMD_SRCS.1659110667" name="Linker Command Files" superClass="com.ti.ccstudio.buildDefinitions.MSP430_4.2.exeLinker.inputType__CMD_SRCS"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.MSP430_4.2.exeLinker.inputType__CMD2_SRCS.1058540793" name="Linker Command Files" superClass="com.ti.ccstudio.buildDefinitions.MSP430_4.2.exeLinker.inputType__CMD2_SRCS"/>

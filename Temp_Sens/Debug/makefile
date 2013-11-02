@@ -2,20 +2,24 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CG_TOOL_ROOT := /opt/ti/ccsv5/tools/compiler/msp430_4.2.1
+SHELL = cmd.exe
+
+CG_TOOL_ROOT := C:/ti/ccsv5/tools/compiler/msp430_4.2.1
 
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
 "./main.obj" \
 "../lnk_msp430g2333.cmd" \
 -l"libc.a" \
--l"/home/dan/dans_code/MSP430/workspace/lib1wire/Debug/lib1wire.lib" \
--l"/home/dan/dans_code/MSP430/workspace/liblcd/Debug/liblcd.lib" \
+-l"C:\Users\Dan\Documents\TI_Workspace\lib1wire\Debug\lib1wire.lib" \
+-l"C:\Users\Dan\Documents\TI_Workspace\liblcd\Debug\liblcd.lib" \
+-l"C:\Users\Dan\Documents\TI_Workspace\libtemp\Debug\libtemp.lib" \
+-l"C:\Users\Dan\Documents\TI_Workspace\libxbee\Debug\libxbee.lib" \
 
 -include ../makefile.init
 
-RM := rm -rf
-RMDIR := rm -rf
+RM := DEL /F
+RMDIR := RMDIR /S/Q
 
 # All of the sources participating in the build are defined here
 -include sources.mk
@@ -112,14 +116,16 @@ endif
 all: Temp_Sens.out
 
 dependents:
-	-cd /home/dan/dans_code/MSP430/workspace/lib1wire/Debug && $(MAKE) all
-	-cd /home/dan/dans_code/MSP430/workspace/liblcd/Debug && $(MAKE) all
+	-cd C:/Users/Dan/Documents/TI_Workspace/lib1wire/Debug && $(MAKE) all
+	-cd C:/Users/Dan/Documents/TI_Workspace/liblcd/Debug && $(MAKE) all
+	-cd C:/Users/Dan/Documents/TI_Workspace/libtemp/Debug && $(MAKE) all
+	-cd C:/Users/Dan/Documents/TI_Workspace/libxbee/Debug && $(MAKE) all
 
 # Tool invocations
-Temp_Sens.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS) /home/dan/dans_code/MSP430/workspace/lib1wire/Debug/lib1wire.lib /home/dan/dans_code/MSP430/workspace/liblcd/Debug/liblcd.lib
+Temp_Sens.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS) C:/Users/Dan/Documents/TI_Workspace/lib1wire/Debug/lib1wire.lib C:/Users/Dan/Documents/TI_Workspace/liblcd/Debug/liblcd.lib C:/Users/Dan/Documents/TI_Workspace/libtemp/Debug/libtemp.lib C:/Users/Dan/Documents/TI_Workspace/libxbee/Debug/libxbee.lib
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Linker'
-	"/opt/ti/ccsv5/tools/compiler/msp430_4.2.1/bin/cl430" -vmsp --abi=eabi -Ooff --opt_for_speed=0 --advice:power="all" -g --define=__MSP430G2333__ --diag_warning=225 --display_error_number --diag_wrap=off --printf_support=minimal -z -m"Temp_Sens.map" --heap_size=80 --stack_size=80 -i"/opt/ti/ccsv5/ccs_base/msp430/include" -i"/opt/ti/ccsv5/tools/compiler/msp430_4.2.1/lib" -i"/opt/ti/ccsv5/tools/compiler/msp430_4.2.1/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Temp_Sens_linkInfo.xml" --rom_model -o "Temp_Sens.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv5/tools/compiler/msp430_4.2.1/bin/cl430" -vmsp --abi=eabi -Ooff --opt_for_speed=0 --advice:power="all" -g --define=__MSP430G2333__ --diag_warning=225 --display_error_number --diag_wrap=off --printf_support=minimal -z -m"Temp_Sens.map" --heap_size=80 --stack_size=80 -i"C:/ti/ccsv5/ccs_base/msp430/include" -i"C:/ti/ccsv5/tools/compiler/msp430_4.2.1/lib" -i"C:/ti/ccsv5/tools/compiler/msp430_4.2.1/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Temp_Sens_linkInfo.xml" --rom_model -o "Temp_Sens.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -133,8 +139,10 @@ clean:
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/dan/dans_code/MSP430/workspace/lib1wire/Debug/lib1wire.lib:
-/home/dan/dans_code/MSP430/workspace/liblcd/Debug/liblcd.lib:
+C:/Users/Dan/Documents/TI_Workspace/lib1wire/Debug/lib1wire.lib:
+C:/Users/Dan/Documents/TI_Workspace/liblcd/Debug/liblcd.lib:
+C:/Users/Dan/Documents/TI_Workspace/libtemp/Debug/libtemp.lib:
+C:/Users/Dan/Documents/TI_Workspace/libxbee/Debug/libxbee.lib:
 
 -include ../makefile.targets
 

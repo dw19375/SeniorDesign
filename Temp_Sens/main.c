@@ -4,73 +4,123 @@
 #include "onewire.h"
 #include "ds18b20.h"
 #include "lcd20.h"
+#include "spi.h"
 
 /*
  * main.c
  */
 int main(void) {
-	onewire_t ow;
-	int i, xpos = 0, begin_xpos;
-	uint8_t scratchpad[9];
+	int xpos = 0, begin_xpos;
 	int16_t temp = 0;
 
 	WDTCTL = WDTPW + WDTHOLD; //Stop watchdog timer
 	BCSCTL1 = CALBC1_8MHZ;
 	DCOCTL = CALDCO_8MHZ;
 
-	ow.port_out = &P2OUT;
-	ow.port_in = &P2IN;
-	ow.port_ren = &P2REN;
-	ow.port_dir = &P2DIR;
-	ow.pin = BIT4;
+	P1DIR |= 0x40;
 
-	// Initialize temp. sensor to 10-bit resolution
-	onewire_reset(&ow);
-	onewire_write_byte(&ow, 0xcc); // skip ROM command
-	onewire_write_byte(&ow, 0xbe); // read scratchpad command
-	for (i = 0; i < 9; i++)
-		scratchpad[i] = onewire_read_byte(&ow);
-
-	scratchpad[4] = ((scratchpad[4])&0x9F) | 0x20;		// Set to x01x xxxx for 10-bit resolution
-
-	onewire_reset(&ow);
-	onewire_write_byte(&ow, 0xcc); // skip ROM command
-	onewire_write_byte(&ow, 0x4E); // write scratchpad command
-	for (i = 2; i <= 4; i++)
-		onewire_write_byte(&ow, scratchpad[i]);
-
+	// Initialize 1-wire port and set precision to 10 bits.
+//	temp_init();
+//	set_precision( 1 );
 
 	lcdinit();
-	prints("Temp: ");
-	xpos += 6;
+
+	lcdData('H');
+	lcdData('e');
+	// Initialize SPI port
+	spi_init();
+
+	lcdData('l');
+	lcdData('l');
+//	prints("Temp: ");
+//	xpos += 6;
 //	gotoXy(12,0);
 //	prints(" deg. C");
 
-	begin_xpos = xpos;
+	// Clear the interrupt flags
+	IFG2 = 0;
+	__bis_SR_register(GIE);
+
+//	begin_xpos = xpos;
+	lcdData('o');
 	while( 1 )
 	{
-		onewire_reset(&ow);
-		onewire_write_byte(&ow, 0xcc); // skip ROM command
-		onewire_write_byte(&ow, 0x44); // convert T command
-		onewire_line_high(&ow);
-		DELAY_MS(200); // at least 187.5 ms for the 10-bit resolution
-		onewire_reset(&ow);
-		onewire_write_byte(&ow, 0xcc); // skip ROM command
-		onewire_write_byte(&ow, 0xbe); // read scratchpad command
-		for (i = 0; i < 9; i++) scratchpad[i] = onewire_read_byte(&ow);
+		int i;
+		volatile uint8_t* rx_data;
+		gotoXy(0,1);
 
-		temp = scratchpad[1] << 8 | scratchpad[0];
+		lcdData('R');
 
-		gotoXy(xpos,0);
-		xpos += integerToLcd( temp >> 4 );	// Divide by 16 to display integer part
-		xpos += dec2ToLcd( temp >> 2 );		// Want fractional part in lowest two bits
+		uint8_t buf[22] = {0x7E, 0x00, 0x04, 0x01, 0x02, 0x03, 0x04, 0x05};
+		spi_send_frame(buf);
 
-		gotoXy(xpos,0);
-		prints(" deg. C");
+//		for(i=0; i<64; i++)
+//		{
+//			lcdData(' ');
+//		}
 
-		xpos = begin_xpos;
+		lcdData('x');
+
+		while( !(rx_data=spi_get_frame()) );		// Wait until we receive whole frame
+
+		// Write frame just received to LCD.
+		prints(": ");
+		for( i=0; i < rx_data_len; i++ )
+		{
+			hex2Lcd( rx_data[i] );
+		}
+
+		while(1);
+		__delay_cycles(100000);
+
+
+//		temp = read_temp();
+//
+//		gotoXy(xpos,0);
+//		xpos += integerToLcd( temp >> 4 );	// Divide by 16 to display integer part
+//		xpos += dec2ToLcd( temp >> 2 );		// Want fractional part in lowest two bits
+//
+//		gotoXy(xpos,0);
+//		prints(" deg. C");
+//
+//		xpos = begin_xpos;
 	
 //		_BIS_SR(LPM0_bits + GIE);
 	}
-	return 0;
+//	return 0;
+}
+
+/*
+ * Interrupt handler for SPI receive
+ */
+#pragma vector=USCIAB0RX_VECTOR
+__interrupt void USCIA0RX_ISR(void)
+{
+	if( IFG2 & UCA0RXIFG );
+	{
+		// Clear the interrupt flag
+		IFG2 &= ~UCA0RXIFG;
+
+	    // Receive next byte of frame
+	    spi_recv_frame();
+	}
+  //hex2Lcd( UCA0RXBUF );
+}
+
+/*
+ * Interrupt handler for SPI transmit
+ */
+#pragma vector=USCIAB0TX_VECTOR
+__interrupt void USCIA0TX_ISR(void)
+{
+	if( IFG2 & UCA0TXIFG );
+	{
+		// Clear the interrupt flag
+		IFG2 &= ~UCA0TXIFG;
+
+		// Receive next byte of frame
+		spi_transmit_frame();
+	}
+	P1OUT ^= 0x40;
+	//hex2Lcd( UCA0TXBUF );
 }

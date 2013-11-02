@@ -3,6 +3,8 @@
  *
  *  Created on: Oct 30, 2013
  *      Author: Dan Whisman
+ *
+ *  Note: The interrupt handlers must be defined in the top level project.
  */
 
 /*
@@ -16,12 +18,12 @@
 
 // First two bytes are length,
 // length = 0: already received packet
-extern uint8_t rx_buf[MAX_BUF_LEN];
-extern uint8_t rx_data_len;				// Length of Rx data in rx_buf
-extern uint8_t have_rx_data;
+volatile uint8_t rx_buf[MAX_BUF_LEN] = {0, 0};
+volatile uint8_t rx_data_len = 0;				// Length of Rx data in rx_buf
+volatile uint8_t have_rx_data = 0;
 
 // Pointer to buffer to send
-const uint8_t* to_send;
+const uint8_t* to_send = 0x00;
 
 /*
  * Initialization of SPI
@@ -36,7 +38,10 @@ void spi_init()
 	UCA0BR1 = 0;                              //
 	UCA0MCTL = 0;                             // No modulation
 	UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
-	IE2 |= UCA0RXIE;                          // Enable USCI0 RX interrupt
+
+	// Don't enable Tx interrupts just yet, wait until we send something
+	IE2 |= UCA0RXIE;               			  // Enable USCI0 RX interrupt
+
 }
 
 
@@ -91,22 +96,47 @@ void spi_recv_frame()
 	if( numbytes >= len+3 ) // len >= 0, will set after numbytes = 2.
 	{
 		numbytes = 0;
+		have_rx_data = 1;
 	}
 	else
+	{
 		numbytes++;
+
+		// If not actively transmitting, may need to send data to receive it
+		// Transmit interrupt is enabled only if we are actively transmitting relevant data
+		// If it is clear, we will need to transmit our own
+		if( (!(UCA0STAT & UCBUSY)) && (!(IE2 & UCA0TXIE)) )
+		{
+			UCA0TXBUF = 0xFF;
+		}
+
+		//while (!(IFG2 & UCA0TXIFG));    // USCI_A0 TX buffer ready?
+		//UCA0TXBUF = 0xFF;				// Write to Tx buffer to start receiving next byte
+	}
+
 }
 
 /*
  * Returns pointer to received frame if unread, 0x00 if not
  */
-uint8_t* spi_get_frame()
+volatile uint8_t* spi_get_frame()
 {
-	uint8_t* ret = 0x00;
+	volatile uint8_t* ret = 0x00;
 
 	if( have_rx_data )
 	{
 		ret = rx_buf;
 		have_rx_data = 0;
+	}
+	else if( (!(UCA0STAT & UCBUSY)) && (!(IE2 & UCA0TXIE)) )
+	{
+		UCA0TXBUF = 0xFF;
+		// May need to start transmission to start receiving
+		// UCA0TXBUF = 0xFF;
+	}
+	else
+	{
+		P1OUT ^= 0x40;
 	}
 
 	return ret;
@@ -126,20 +156,32 @@ void spi_transmit_frame()
 	static uint8_t totx = 0;			// Number of bytes to send total
 	static uint8_t numbytes = 0;		// Number of bytes sent / index of next byte to send
 
-	if( numbytes == 0 )
+	if( to_send )
 	{
-		totx = to_send[2] + 4;			// LSB of length in XBee data frame
-	}
+		if( numbytes == 0 )
+		{
+			totx = to_send[2] + 4;			// LSB of length in XBee data frame
 
-	if( numbytes == totx )
-	{
-		numbytes = 0;
-	}
-	else
-	{
-		while (!(IFG2 & UCA0TXIFG));              // USCI_A0 TX buffer ready?
-		UCA0TXBUF = to_send[numbytes];
-		numbytes++;
+			// Clear Tx interrupt flag and enable interrupt
+			IFG2 &= ~UCA0TXIFG;
+			IE2 |= UCA0TXIE;
+		}
+
+		if( numbytes == totx )
+		{
+			numbytes = 0;
+
+			// Have sent everything, set to_send to NULL to indicate so
+			to_send = 0x00;
+
+			// Disable Tx interrupt so we can receive without being bothered
+			IE2 &= ~UCA0TXIE;
+		}
+		else
+		{
+			UCA0TXBUF = to_send[numbytes];
+			numbytes++;
+		}
 	}
 }
 
@@ -153,30 +195,4 @@ void spi_send_frame( const uint8_t* buf )
 
 	// Transmit first frame
 	spi_transmit_frame();
-}
-
-/*
- * Interrupt handler for SPI receive
- */
-#pragma vector=USCIAB0RX_VECTOR
-__interrupt void USCIA0RX_ISR(void)
-{
-  if( IFG2 & UCA0RXIFG );
-  {
-	  // Receive next byte of frame
-	  spi_recv_frame();
-  }
-}
-
-/*
- * Interrupt handler for SPI transmit
- */
-#pragma vector=USCIAB0TX_VECTOR
-__interrupt void USCIA0TX_ISR(void)
-{
-	if( IFG2 & UCA0TXIFG );
-	{
-		// Receive next byte of frame
-		spi_transmit_frame();
-	}
 }

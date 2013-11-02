@@ -30,8 +30,17 @@
 /*
  * Global Variables
  */
-uint8_t rx_buf[MAX_BUF_LEN] = {0, 0};
-uint8_t rx_data_len = 0;				// Length of Rx data in rx_buf
-uint8_t have_rx_data = 0;
+extern volatile uint8_t rx_buf[MAX_BUF_LEN];
+extern volatile uint8_t rx_data_len;				// Length of Rx data in rx_buf
+extern volatile uint8_t have_rx_data;
+
+/*
+ * Function Definitions
+ */
+void spi_init();
+void spi_recv_frame();
+volatile uint8_t* spi_get_frame();
+void spi_transmit_frame();
+void spi_send_frame( const uint8_t* buf );
 
 #endif /* SPI_H_ */
