@@ -76,6 +76,9 @@
 //******************************************************************************
 #include <msp430.h>
 
+unsigned char buf[8]; // = {0x7E, 0x00, 0x04, 0x0F, 0x18, 0xBB, 0x55, 0x00};
+unsigned char idx = 0, idx2 = 0;
+
 int main(void)
 {
   WDTCTL = WDTPW + WDTHOLD;                 // Stop watchdog timer
@@ -86,7 +89,7 @@ int main(void)
   P1SEL = BIT1 + BIT2 + BIT4;
   P1SEL2 = BIT1 + BIT2 + BIT4;
   UCA0CTL1 = UCSWRST;                       // **Put state machine in reset**
-  UCA0CTL0 |= UCCKPL + UCMSB + UCSYNC;      // 3-pin, 8-bit SPI master
+  UCA0CTL0 = UCCKPL + UCMSB + UCSYNC;      // 3-pin, 8-bit SPI master
   UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
   IE2 |= UCA0RXIE;                          // Enable USCI0 RX interrupt
 
@@ -101,7 +104,32 @@ __interrupt void USCI0RX_ISR (void)
 	IFG2 &= ~UCA0RXIFG;
 
 	while (!(IFG2 & UCA0TXIFG));              // USCI_A0 TX buffer ready?
-	UCA0TXBUF = UCA0RXBUF;
 
-	P1OUT ^= 0x01;
+	// Send next byte if received 0xFF
+	if( UCA0RXBUF == 0xFF )
+	{
+		//buf[0] = 0x7E;
+
+		if( !idx2 )
+			P1OUT |= BIT0;
+		else
+			P1OUT &= ~BIT0;
+
+
+		UCA0TXBUF = buf[idx2];
+
+		idx2 = (idx2+1) & 0x07;
+	}
+	else
+	{
+		// Put next byte in 8 byte buffer
+		buf[idx] = UCA0RXBUF;
+
+		idx = (idx+1) & 0x07;
+	}
+
+	if( UCA0RXBUF == 0x7E )
+		P1OUT |= BIT0;
+	else
+		P1OUT &= ~BIT0;
 }

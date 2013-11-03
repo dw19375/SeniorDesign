@@ -25,13 +25,13 @@ int main(void) {
 
 	lcdinit();
 
-	lcdData('H');
-	lcdData('e');
+//	lcdData('H');
+//	lcdData('e');
 	// Initialize SPI port
 	spi_init();
 
-	lcdData('l');
-	lcdData('l');
+//	lcdData('l');
+//	lcdData('l');
 //	prints("Temp: ");
 //	xpos += 6;
 //	gotoXy(12,0);
@@ -42,16 +42,17 @@ int main(void) {
 	__bis_SR_register(GIE);
 
 //	begin_xpos = xpos;
-	lcdData('o');
+//	lcdData('o');
 	while( 1 )
 	{
 		int i;
 		volatile uint8_t* rx_data;
-		gotoXy(0,1);
 
-		lcdData('R');
+//		gotoXy(0,1);
+//		lcdData('R');
+//		gotoXy(0,2);
 
-		uint8_t buf[22] = {0x7E, 0x00, 0x04, 0x01, 0x02, 0x03, 0x04, 0x05};
+		uint8_t buf[22] = {0x7E, 0x00, 0x04, 0x0F, 0x18, 0xBB, 0x55, 0x00, 0xFF};
 		spi_send_frame(buf);
 
 //		for(i=0; i<64; i++)
@@ -59,19 +60,30 @@ int main(void) {
 //			lcdData(' ');
 //		}
 
-		lcdData('x');
+		__delay_cycles(100000);
 
-		while( !(rx_data=spi_get_frame()) );		// Wait until we receive whole frame
+//		gotoXy(1,1);
+//		lcdData('x');
+//		gotoXy(0,3);
+
+		while( !(rx_data=spi_get_frame()) )		// Wait until we receive whole frame
+		{
+			__delay_cycles(100000);
+		}
 
 		// Write frame just received to LCD.
-		prints(": ");
-		for( i=0; i < rx_data_len; i++ )
+//		gotoXy(2,1);
+//		prints("x: ");
+		for( i=0; i < rx_data_len && i < MAX_BUF_LEN; i++ )
 		{
 			hex2Lcd( rx_data[i] );
 		}
 
-		while(1);
-		__delay_cycles(100000);
+		while(1)
+		{
+			//spi_send_frame(buf);
+		}
+		//__delay_cycles(100000);
 
 
 //		temp = read_temp();
@@ -100,6 +112,9 @@ __interrupt void USCIA0RX_ISR(void)
 	{
 		// Clear the interrupt flag
 		IFG2 &= ~UCA0RXIFG;
+
+//		if( !(IE2 & UCA0TXIE) )
+//			hex2Lcd( UCA0RXBUF );
 
 	    // Receive next byte of frame
 	    spi_recv_frame();

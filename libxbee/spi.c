@@ -32,10 +32,10 @@ void spi_init()
 {
 	P1SEL |= BIT1 + BIT2 + BIT4;
 	P1SEL2 |= BIT1 + BIT2 + BIT4;
-	UCA0CTL0 |= UCCKPL + UCMSB + UCMST + UCSYNC;  // 3-pin, 8-bit SPI master
+	UCA0CTL0 = UCCKPL + UCMSB + UCMST + UCSYNC;  // 3-pin, 8-bit SPI master
 	UCA0CTL1 |= UCSSEL_2;                     // SMCLK
-	UCA0BR0 |= 0x02;                          // /2
-	UCA0BR1 = 0;                              //
+	UCA0BR0 = 0x00;                           // /1024
+	UCA0BR1 = 0x04;                              //
 	UCA0MCTL = 0;                             // No modulation
 	UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
 
@@ -162,9 +162,9 @@ void spi_transmit_frame()
 		{
 			totx = to_send[2] + 4;			// LSB of length in XBee data frame
 
-			// Clear Tx interrupt flag and enable interrupt
-			IFG2 &= ~UCA0TXIFG;
-			IE2 |= UCA0TXIE;
+//			// Clear Tx interrupt flag and enable interrupt
+//			IFG2 &= ~UCA0TXIFG;
+//			IE2 |= UCA0TXIE;
 		}
 
 		if( numbytes == totx )
@@ -179,8 +179,12 @@ void spi_transmit_frame()
 		}
 		else
 		{
+			while(UCA0STAT & UCBUSY);		// Wait until SPI port not busy
+
 			UCA0TXBUF = to_send[numbytes];
 			numbytes++;
+
+			__delay_cycles(100);
 		}
 	}
 }
@@ -192,6 +196,13 @@ void spi_send_frame( const uint8_t* buf )
 {
 	// Keep local copy of pointer
 	to_send = buf;
+
+	if( buf )
+	{
+		// Clear Tx interrupt flag and enable interrupt
+		IFG2 &= ~UCA0TXIFG;
+		IE2 |= UCA0TXIE;
+	}
 
 	// Transmit first frame
 	spi_transmit_frame();
