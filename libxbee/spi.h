@@ -42,5 +42,7 @@ void spi_recv_frame();
 volatile uint8_t* spi_get_frame();
 void spi_transmit_frame();
 void spi_send_frame( const uint8_t* buf );
+uint8_t calculate_checksum( uint8_t* buf, uint8_t len );
+uint8_t verify_checksum( uint8_t* buf, uint8_t len, uint8_t checksum );
 
 #endif /* SPI_H_ */

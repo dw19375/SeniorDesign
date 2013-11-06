@@ -32,10 +32,10 @@ void spi_init()
 {
 	P1SEL |= BIT1 + BIT2 + BIT4;
 	P1SEL2 |= BIT1 + BIT2 + BIT4;
-	UCA0CTL0 = UCCKPL + UCMSB + UCMST + UCSYNC;  // 3-pin, 8-bit SPI master
+	UCA0CTL0 = UCCKPH + UCMSB + UCMST + UCSYNC;  // 3-pin, 8-bit SPI master
 	UCA0CTL1 |= UCSSEL_2;                     // SMCLK
-	UCA0BR0 = 0x00;                           // /1024
-	UCA0BR1 = 0x04;                              //
+	UCA0BR0 = 0x02;                           //
+	UCA0BR1 = 0x00;                              //
 	UCA0MCTL = 0;                             // No modulation
 	UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
 
@@ -107,7 +107,7 @@ void spi_recv_frame()
 		// If it is clear, we will need to transmit our own
 		if( (!(UCA0STAT & UCBUSY)) && (!(IE2 & UCA0TXIE)) )
 		{
-			UCA0TXBUF = 0xFF;
+			//UCA0TXBUF = 0xFF;
 		}
 
 		//while (!(IFG2 & UCA0TXIFG));    // USCI_A0 TX buffer ready?
@@ -130,7 +130,6 @@ volatile uint8_t* spi_get_frame()
 	}
 	else if( (!(UCA0STAT & UCBUSY)) && (!(IE2 & UCA0TXIE)) )
 	{
-		UCA0TXBUF = 0xFF;
 		// May need to start transmission to start receiving
 		// UCA0TXBUF = 0xFF;
 	}
@@ -175,7 +174,7 @@ void spi_transmit_frame()
 			to_send = 0x00;
 
 			// Disable Tx interrupt so we can receive without being bothered
-			IE2 &= ~UCA0TXIE;
+			//IE2 &= ~UCA0TXIE;
 		}
 		else
 		{
@@ -201,9 +200,27 @@ void spi_send_frame( const uint8_t* buf )
 	{
 		// Clear Tx interrupt flag and enable interrupt
 		IFG2 &= ~UCA0TXIFG;
-		IE2 |= UCA0TXIE;
+		//IE2 |= UCA0TXIE;
 	}
 
 	// Transmit first frame
 	spi_transmit_frame();
+}
+
+uint8_t calculate_checksum( uint8_t* buf, uint8_t len )
+{
+	uint8_t ret = 0;
+
+	while( len )
+	{
+		len--;
+		ret += buf[len];
+	}
+
+	return 0xFF - ret;
+}
+
+uint8_t verify_checksum( uint8_t* buf, uint8_t len, uint8_t checksum )
+{
+	return 0xFF == ( checksum + calculate_checksum(buf, len) );
 }
