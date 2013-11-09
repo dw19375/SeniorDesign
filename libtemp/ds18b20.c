@@ -16,17 +16,6 @@
 #include "delay.h"
 #include "onewire.h"
 
-/*
- * Defines
- */
-#define OW_PORT_OUT  	&P2OUT
-#define OW_PORT_IN		&P2IN
-#define OW_PORT_REN		&P2REN
-#define OW_PORT_DIR		&P2DIR
-#define OW_PIN			BIT4
-
-#define TEMP_READ_DELAY 94		// Time (in ms) to wait for a 9-bit temperature read
-
 
 /*
  * Global variables
@@ -34,6 +23,19 @@
 
 static onewire_t ow;
 static int precision = 1;
+
+/*
+ * Initializes 1-wire port
+ */
+void temp_init()
+{
+	ow.port_out = OW_PORT_OUT;
+	ow.port_in = OW_PORT_IN;
+	ow.port_ren = OW_PORT_REN;
+	ow.port_dir = OW_PORT_DIR;
+	ow.pin = OW_PIN;
+}
+
 
 /*
  * Returns the temperature as read from the DS18B20

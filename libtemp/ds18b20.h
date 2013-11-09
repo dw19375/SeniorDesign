@@ -19,9 +19,21 @@
 #include <stdint.h>
 
 /*
+ * Defines
+ */
+#define OW_PORT_OUT  	&P2OUT
+#define OW_PORT_IN		&P2IN
+#define OW_PORT_REN		&P2REN
+#define OW_PORT_DIR		&P2DIR
+#define OW_PIN			BIT4
+
+#define TEMP_READ_DELAY 94		// Time (in ms) to wait for a 9-bit temperature read
+
+/*
  * Global function definitions
  */
 
+void temp_init();
 int16_t read_temp();
 void start_conversion();
 void delay_temp_read();
