@@ -40,41 +40,41 @@ int main(void)
 
 	lcdinit();
 
-	uint8_t str[7] = {'+','+','+',0x00};
+	__bis_SR_register(GIE);
 
-	uart_send_frame(str);
-
-	while( !rx_ok ); // Wait until we have received OK from xbee
-	str[0] = 'A';
-	str[1] = 'T';
-	str[2] = 'A';
-	str[3] = 'P';
-	str[4] = 0x0D;
-	str[5] = 0x00;
-	uart_send_frame(str);
-
-	while( !rx_ok );
-	str[3] = 'C';
-	str[4] = ' ';
-	uart_send_frame(str);
+//	uint8_t str[8] = {'+','+','+',0x00};
+//
+//	uart_send_frame(str);
+//
+//	while( !rx_ok ); // Wait until we have received OK from xbee
+//	str[0] = 'A';
+//	str[1] = 'T';
+//	str[2] = 'A';
+//	str[3] = 'P';
+//	str[4] = ' ';
+//	str[5] = '1';
+//	str[6] = 0x0D;
+//	str[7] = 0x00;
+//	uart_send_frame(str);
+//
+//	while( !rx_ok );
+//	str[2] = 'C';
+//	str[3] = 'N';
+//	str[4] = ' ';
+//	uart_send_frame(str);
+//
+//	while( !rx_ok );
 
 	// Should be in API mode now
-	uint8_t buf[22] = {0x7E, 0x00, 0x04, 0x08, 0x07, 'W', 'R', 0x00};
+	uint8_t buf[22] = {0x7E, 0x00, 0x04, 0x08, 0x07, 'T', 'P', 0x00};
 
-	uart_send_frame(buf);
-
-	__delay_cycles(10000000);
-
-	buf[4] = 0x08;
-	buf[5] = 'T';
-	buf[6] = 'P';
+//	__delay_cycles(10000000);
 	buf[7] = calculate_checksum(buf+3,4);
 
 	uart_send_frame(buf);
 
-	__bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
+	while(1);
 
-	
 	return 0;
 }
 
@@ -82,6 +82,7 @@ void uart_send_frame( uint8_t* buf )
 {
 	// Keep local copy of pointer
 	to_send = buf;
+	rx_ok = 0;
 
 	if( buf )
 	{
@@ -122,15 +123,16 @@ void uart_transmit_frame()
 		}
 		else
 		{
+//			if( bytes_rx < 40 )
+//			{
+//				bytes_rx++;
+//				hex2Lcd( to_send[numbytes] );
+//			}
 			while(UCA0STAT & UCBUSY);		// Wait until uart not busy
-			UCA0TXBUF = to_send[numbytes];
-			numbytes++;
 
-			if( bytes_rx < 40 )
-			{
-				bytes_rx++;
-				hex2Lcd( UCA0TXBUF );
-			}
+			// Increment numbytes before transmitting, in case we're interrupted...
+			numbytes++;
+			UCA0TXBUF = to_send[numbytes-1];
 		}
 	}
 }
@@ -155,7 +157,7 @@ uint8_t verify_checksum( uint8_t* buf, uint8_t len, uint8_t checksum )
 }
 
 /*
- * Interrupt handler for SPI receive
+ * Interrupt handler for UART receive
  */
 #pragma vector=USCIAB0RX_VECTOR
 __interrupt void USCIA0RX_ISR(void)
@@ -179,7 +181,8 @@ __interrupt void USCIA0RX_ISR(void)
 		}
 		else
 		{
-			rx_ok = 0;
+			if( 2 != rx_ok )
+				rx_ok = 0;
 		}
 
 		if( bytes_rx < 40 )
