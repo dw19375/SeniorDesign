@@ -1,13 +1,8 @@
 #include <msp430.h> 
 #include <stdint.h>
 #include "lcd20.h"
+#include "xbee_uart.h"
 
-void uart_send_frame( uint8_t* buf );
-void uart_transmit_frame();
-uint8_t calculate_checksum( uint8_t* buf, uint8_t len );
-uint8_t verify_checksum( uint8_t* buf, uint8_t len, uint8_t checksum );
-
-static uint8_t* to_send;
 static uint8_t bytes_rx = 0;
 
 // Hack to get out of transparent mode
@@ -78,83 +73,7 @@ int main(void)
 	return 0;
 }
 
-void uart_send_frame( uint8_t* buf )
-{
-	// Keep local copy of pointer
-	to_send = buf;
-	rx_ok = 0;
 
-	if( buf )
-	{
-		// Clear Tx interrupt flag
-		IFG2 &= ~UCA0TXIFG;
-
-		// Transmit first frame
-		uart_transmit_frame();
-	}
-}
-
-void uart_transmit_frame()
-{
-	static uint8_t totx = 0;			// Number of bytes to send total
-	static uint8_t numbytes = 0;		// Number of bytes sent / index of next byte to send
-
-	if( to_send )
-	{
-		if( numbytes == 0 )
-		{
-			if( to_send[0] == 0x7E )
-				totx = to_send[2] + 4;			// LSB of length in XBee data frame
-			else
-			{
-				totx = 0;
-
-				while( to_send[totx] && totx < 16 )
-					totx++;
-			}
-		}
-
-		if( numbytes == totx )
-		{
-			numbytes = 0;
-
-			// Have sent everything, set to_send to NULL to indicate so
-			to_send = 0x00;
-		}
-		else
-		{
-//			if( bytes_rx < 40 )
-//			{
-//				bytes_rx++;
-//				hex2Lcd( to_send[numbytes] );
-//			}
-			while(UCA0STAT & UCBUSY);		// Wait until uart not busy
-
-			// Increment numbytes before transmitting, in case we're interrupted...
-			numbytes++;
-			UCA0TXBUF = to_send[numbytes-1];
-		}
-	}
-}
-
-
-uint8_t calculate_checksum( uint8_t* buf, uint8_t len )
-{
-	uint8_t ret = 0;
-
-	while( len )
-	{
-		len--;
-		ret += buf[len];
-	}
-
-	return 0xFF - ret;
-}
-
-uint8_t verify_checksum( uint8_t* buf, uint8_t len, uint8_t checksum )
-{
-	return 0xFF == ( checksum + calculate_checksum(buf, len) );
-}
 
 /*
  * Interrupt handler for UART receive
@@ -206,6 +125,6 @@ __interrupt void USCIA0TX_ISR(void)
 		IFG2 &= ~UCA0TXIFG;
 
 		// Transmit next byte of frame
-		uart_transmit_frame();
+		uart_transmit_next_byte();
 	}
 }
