@@ -9,11 +9,19 @@
 #define XBEE_UART_H_
 
 #include <stdint.h>
+#include <msp430.h>
 
+/*
+ * Global definitions
+ */
+#define RX_BUF_LEN 22
 
 /*
  * Exported Functions
  */
+void frame_recv_handler( void (*new_handler)() );
+volatile uint8_t* uart_get_frame();
+void uart_recv_next_byte();
 void uart_send_frame( uint8_t* buf );
 void uart_transmit_next_byte();
 uint8_t calculate_checksum( uint8_t* buf, uint8_t len );
