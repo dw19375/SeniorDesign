@@ -1,1 +1,1 @@
-"./spi.obj" 
+"./xbee_uart.obj" "./xbee_net.obj" "./spi.obj" 

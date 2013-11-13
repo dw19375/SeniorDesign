@@ -2,18 +2,18 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-SHELL = cmd.exe
-
-CG_TOOL_ROOT := C:/ti/ccsv5/tools/compiler/msp430_4.2.1
+CG_TOOL_ROOT := /opt/ti/ccsv5/tools/compiler/msp430_4.2.1
 
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
+"./xbee_uart.obj" \
+"./xbee_net.obj" \
 "./spi.obj" \
 
 -include ../makefile.init
 
-RM := DEL /F
-RMDIR := RMDIR /S/Q
+RM := rm -rf
+RMDIR := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
@@ -109,24 +109,28 @@ endif
 # All Target
 all: libxbee.lib
 
+dependents:
+	-cd /home/dan/College/3ece445/liblcd/Debug && $(MAKE) all
+
 # Tool invocations
-libxbee.lib: $(OBJS)
+libxbee.lib: $(OBJS) $(OBJ_SRCS) $(LIB_SRCS) /home/dan/College/3ece445/liblcd/Debug/liblcd.lib
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Archiver'
-	"C:/ti/ccsv5/tools/compiler/msp430_4.2.1/bin/ar430" r "libxbee.lib" $(ORDERED_OBJS)
+	"/opt/ti/ccsv5/tools/compiler/msp430_4.2.1/bin/ar430" r "libxbee.lib" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(MSP430_LIBRARY_OUTPUTS__QUOTED) "libxbee.lib"
-	-$(RM) "spi.pp" 
-	-$(RM) "spi.obj" 
+	-$(RM) "spi.pp" "xbee_net.pp" "xbee_uart.pp" 
+	-$(RM) "spi.obj" "xbee_net.obj" "xbee_uart.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
 .PHONY: all clean dependents
 .SECONDARY:
+/home/dan/College/3ece445/liblcd/Debug/liblcd.lib:
 
 -include ../makefile.targets
 

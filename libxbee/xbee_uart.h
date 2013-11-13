@@ -19,6 +19,8 @@
 /*
  * Exported Functions
  */
+void uart_init();
+void send_data( uint8_t* buf );
 void frame_recv_handler( void (*new_handler)() );
 volatile uint8_t* uart_get_frame();
 void uart_recv_next_byte();

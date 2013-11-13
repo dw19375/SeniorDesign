@@ -14,9 +14,9 @@
 /*
  * Static Global variables
  */
-uint8_t* to_send = 0x00;				// Pointer to buffer to send.
-volatile uint8_t rx_buf[RX_BUF_LEN];	// Receive buffer
-uint8_t rx_data_len = 0;
+static uint8_t* to_send = 0x00;				// Pointer to buffer to send.
+static volatile uint8_t rx_buf[RX_BUF_LEN];	// Receive buffer
+static uint8_t rx_data_len = 0;
 
 /*
  * Initialization function -- STILL NEED TO ENABLE GLOBAL INTERRUPTS AFTER CALLING
@@ -35,6 +35,33 @@ void uart_init()
 	UCA0CTL1 &= ~UCSWRST;                   // **Initialize USCI state machine**
 
 	IE2 |= UCA0RXIE + UCA0TXIE;             // Enable USCI_A0 RX interrupt
+}
+
+/*
+ * Wrapper to send data on the UART to the XBee.  Uses the following format:
+ * 	buf[0] - 0x7E
+ * 	buf[1] - MSB of length
+ * 	buf[2] - LSB of length
+ * 	buf[3] - API Frame Identifier
+ * 	buf[4] - Frame ID (filled in automatically)
+ *
+ * 	buf[len-1] - Checksum (filled in automatically)
+ *
+ * 	Every frame that could be sent to the XBee has the frame ID at buf[4]
+ */
+void send_data( uint8_t* buf )
+{
+	static uint8_t seq = 0;			// Sequence number for frames sent to XBee
+	if( buf )
+	{
+		// len reflects length of whole buffer, not just data part
+		uint16_t len = ( ((uint16_t)buf[1]) << 8 ) + buf[2] + 4;
+
+		buf[3] = ++seq;
+		buf[len-1] = calculate_checksum(buf+3, len-4);
+
+		uart_send_frame( buf );
+	}
 }
 
 /*
@@ -65,7 +92,14 @@ volatile uint8_t* uart_get_frame()
 	volatile uint8_t* ret = 0x00;
 
 	if( rx_data_len )
+	{
+		/*
+		 * Put length in rx_buf[2] (which should be the length anyway).
+		 * rx_data_len will always be at least 4 when it is non-zero.
+		 */
+		rx_buf[2] = rx_data_len;
 		ret = rx_buf;
+	}
 
 	return ret;
 }
