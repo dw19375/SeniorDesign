@@ -108,10 +108,10 @@ endif
 all: libtemp.lib
 
 dependents:
-	-cd /home/dan/dans_code/MSP430/workspace/lib1wire/Release && $(MAKE) all
+	-cd /home/dan/dans_code/MSP430/workspace/lib1wire/Debug && $(MAKE) clean all
 
 # Tool invocations
-libtemp.lib: $(OBJS) /home/dan/dans_code/MSP430/workspace/lib1wire/Release/lib1wire.lib
+libtemp.lib: $(OBJS) $(OBJ_SRCS) $(LIB_SRCS) /home/dan/dans_code/MSP430/workspace/lib1wire/Debug/lib1wire.lib
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Archiver'
 	"/opt/ti/ccsv5/tools/compiler/msp430_4.2.1/bin/ar430" r "libtemp.lib" $(ORDERED_OBJS)
@@ -128,7 +128,7 @@ clean:
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/dan/dans_code/MSP430/workspace/lib1wire/Release/lib1wire.lib:
+/home/dan/dans_code/MSP430/workspace/lib1wire/Debug/lib1wire.lib:
 
 -include ../makefile.targets
 
