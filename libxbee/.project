@@ -3,6 +3,7 @@
 	<name>libxbee</name>
 	<comment></comment>
 	<projects>
+		<project>liblcd</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
