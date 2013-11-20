@@ -20,10 +20,27 @@ int main(void)
     {
       while(1);                               // do not load, trap CPU!!
     }
+<<<<<<< HEAD
 
 
 	lcdinit();
 	uart_init();
+=======
+    BCSCTL1 = CALBC1_8MHZ;
+    DCOCTL = CALDCO_8MHZ;
+    P1SEL = BIT1 + BIT2 ;                   // P1.1 = RXD, P1.2=TXD
+    P1SEL2 = BIT1 + BIT2 ;                  // P1.1 = RXD, P1.2=TXD
+    UCA0CTL0 = 0;							// LSB first
+    UCA0CTL1 = UCSSEL_2;                    // SMCLK
+    UCA0BR0 = 0x41;                         // 8MHz 9600    833 = 0x341
+    UCA0BR1 = 0x03;                         // 8MHz 9600
+    UCA0MCTL = UCBRS1;                      // Modulation UCBRSx = 2
+    UCA0CTL1 &= ~UCSWRST;                   // **Initialize USCI state machine**
+
+    IE2 |= UCA0RXIE + UCA0TXIE;             // Enable USCI_A0 RX interrupt
+
+	lcdinit();
+>>>>>>> 268bb7c0f5001c241efda1cac705571701ddd4da
 
 	__bis_SR_register(GIE);
 
