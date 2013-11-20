@@ -25,11 +25,7 @@ int main(void) {
 	temp_init();
 	set_precision( 1 );
 
-<<<<<<< HEAD
 	__delay_cycles(20000000);
-
-=======
->>>>>>> 268bb7c0f5001c241efda1cac705571701ddd4da
 	lcdinit();
 
 //	lcdData('H');
