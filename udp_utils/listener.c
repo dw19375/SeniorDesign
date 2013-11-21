@@ -76,27 +76,33 @@ int main(void)
 	printf("listener: waiting to recvfrom...\n");
 
 	addr_len = sizeof their_addr;
-	if ((numbytes = recvfrom(sockfd, buf, MAXBUFLEN-1 , 0,
-		(struct sockaddr *)&their_addr, &addr_len)) == -1) {
-		perror("recvfrom");
-		exit(1);
-	}
-
-	printf("Got packet from %s\n",
-		inet_ntop(their_addr.ss_family,
-			get_in_addr((struct sockaddr *)&their_addr),
-			s, sizeof s));
-	printf("Packet is %d bytes long\n", numbytes);
-	buf[numbytes] = '\0';
-	//printf("listener: packet contains \"%s\"\n", buf);
-	
-	
-	for( i=0; i<numbytes && i<MAXBUFLEN; i++ )
+  
+  while( 1 )
   {
-    printf("%.2X ", buf[i]);
+    if ((numbytes = recvfrom(sockfd, buf, MAXBUFLEN-1 , 0,
+      (struct sockaddr *)&their_addr, &addr_len)) == -1) {
+      perror("recvfrom");
+      exit(1);
+    }
+
+    printf("Got packet from %s\n",
+      inet_ntop(their_addr.ss_family,
+        get_in_addr((struct sockaddr *)&their_addr),
+        s, sizeof s));
+    printf("Packet is %d bytes long\n", numbytes);
+    buf[numbytes] = '\0';
+    //printf("listener: packet contains \"%s\"\n", buf);
     
-    if( !(i%16) && i )
-      putchar('\n');
+    
+    for( i=0; i<numbytes && i<MAXBUFLEN; i++ )
+    {
+      printf("%.2X ", buf[i]);
+      
+      if( !(i%16) && i )
+        putchar('\n');
+    }
+
+    putchar('\n');
   }
 
 	close(sockfd);

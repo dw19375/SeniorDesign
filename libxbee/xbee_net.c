@@ -19,6 +19,7 @@ static volatile uint8_t mstat = 0;		// Modem status from XBee.  2 if associated 
  * Local function declarations
  */
 void print_frame( uint8_t* buf );
+void frame_rx_handler();
 void set_IP_addr_mode();
 void set_SSID();
 void set_encryption_type();
@@ -61,15 +62,49 @@ void frame_rx_handler()
 
 		case 0x8A:			// Modem status
 			mstat = buf[4];
-		case 0xB0:			// Rx packet
 		case 0xFE:			// Frame Error
 			print_frame( (uint8_t*) buf );
 			break;
+
+		case 0xB0:			// Rx packet
+			packet_rx_handler( 0x00 );
+			break;
+
 		default:			// Don't care about other frames received
 			break;
 	}
 
 }
+
+
+/*
+ * Defines a handler for received UDP packets or calls the handler
+ *
+ * Inputs:
+ * 		void (*new_handler)():		If non-NULL, will set a new function to call when
+ * 									a packet is received.
+ * 									If NULL, will call user defined handler
+ */
+void packet_rx_handler( void (*new_handler)() )
+{
+	static void (*handler)() = 0x00;
+
+	if( 0x00 == new_handler )
+	{
+		/*
+		 * Call user defined handler
+		 */
+		if( handler )
+		{
+			(*handler)();
+		}
+	}
+	else
+	{
+		handler = new_handler;
+	}
+}
+
 
 
 /*
@@ -89,6 +124,9 @@ void xbee_tx_packet( uint8_t ip, uint8_t* buf, uint8_t len )
 
 	if( buf )
 	{
+		// Put IP address in packet
+		p[8] = ip;
+
 		// Copy data over
 		for( i=0; (i<len) && ((i+15)<RX_BUF_LEN); i++ )
 		{
@@ -115,7 +153,8 @@ uint8_t xbee_init()
 {
 	uint8_t ret = 0;
 
-//	uart_init();
+	// Set the frame receive handler
+	frame_recv_handler( frame_rx_handler );
 
 	set_IP_addr_mode();
 
@@ -128,6 +167,8 @@ uint8_t xbee_init()
 			if( !(ret = cts) )
 			{
 				set_encryption_password();
+
+#if USE_DHCP == 1
 				if( !(ret = cts) )
 				{
 					set_IP_address();
@@ -140,6 +181,7 @@ uint8_t xbee_init()
 						}
 					}
 				}
+#endif /* USE_DHCP = 1 */
 			}
 		}
 	}
@@ -151,7 +193,7 @@ uint8_t xbee_init()
 // Sets IP addressing mode
 void set_IP_addr_mode()
 {
-	uint8_t buf[] = {0x7E, 0x00, 0x05, 0x08, 0, 'M', 'A', 0x01, 0};
+	uint8_t buf[] = {0x7E, 0x00, 0x05, 0x08, 0, 'M', 'A', USE_DHCP, 0};
 
 	while(cts);
 	cts = 1;

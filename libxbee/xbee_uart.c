@@ -75,6 +75,9 @@ void frame_recv_handler( void (*new_handler)() )
 
 	if( 0x00 == new_handler )
 	{
+		/*
+		 * Call user defined handler
+		 */
 		if( handler )
 		{
 			(*handler)();
@@ -94,7 +97,7 @@ volatile uint8_t* uart_get_frame()
 	if( rx_data_len )
 	{
 		/*
-		 * Put length in rx_buf[2] (which should be the length anyway).
+		 * Put length in rx_buf[2].
 		 * rx_data_len will always be at least 4 when it is non-zero.
 		 */
 		rx_buf[2] = rx_data_len;

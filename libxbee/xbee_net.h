@@ -21,11 +21,13 @@
 #define MASK_STR "~0000MK255.255.255.0"
 #define MASK_STR_LEN 17
 
+#define USE_DHCP 1			// 0 for DHCP, 1 for Static IP
+
 /*
  * Function declarations
  */
 uint8_t xbee_init();
-void frame_rx_handler();
+void packet_rx_handler( void (*new_handler)() );
 void xbee_tx_packet( uint8_t ip, uint8_t* buf, uint8_t len );
 
 

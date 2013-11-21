@@ -4,6 +4,8 @@
 #include "xbee_uart.h"
 #include "xbee_net.h"
 
+void print_packet();
+
 //static uint8_t bytes_rx = 0;
 
 // Hack to get out of transparent mode
@@ -24,10 +26,6 @@ int main(void)
 
 	lcdinit();
 	uart_init();
-
-
-	// Set the frame receive handler
-	frame_recv_handler( frame_rx_handler );
 
 	__bis_SR_register(GIE);
 
@@ -67,17 +65,30 @@ int main(void)
 
 	xbee_init();
 
-	while(1)
-	{
-		__delay_cycles(8000000);
-		xbee_tx_packet( 100, "Hi!", 3 );
-	}
+	packet_rx_handler( print_packet );
 
-//	while(1);
+	xbee_tx_packet( 100, "Hi!", 3 );
+
+
+	while(1);
 
 	return 0;
 }
 
+void print_packet()
+{
+	volatile uint8_t* p = uart_get_frame();
+	uint8_t i;
+
+	if( p )
+	{
+		lcdData('|');
+		for( i = 14; i < p[2]; i++ )
+		{
+			hex2Lcd( p[i] );
+		}
+	}
+}
 
 
 /*
