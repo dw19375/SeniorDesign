@@ -18,12 +18,15 @@
 #define GATEWAY_STR_LEN 15
 #define IP_ADDR_STR "~0000MY192.168.1.128"
 #define IP_ADDR_STR_LEN 17
+#define MASK_STR "~0000MK255.255.255.0"
+#define MASK_STR_LEN 17
 
 /*
  * Function declarations
  */
 uint8_t xbee_init();
 void frame_rx_handler();
+void xbee_tx_packet( uint8_t ip, uint8_t* buf, uint8_t len );
 
 
 #endif /* XBEE_NET_H_ */

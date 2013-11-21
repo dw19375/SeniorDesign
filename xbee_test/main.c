@@ -4,7 +4,7 @@
 #include "xbee_uart.h"
 #include "xbee_net.h"
 
-static uint8_t bytes_rx = 0;
+//static uint8_t bytes_rx = 0;
 
 // Hack to get out of transparent mode
 static char rx_buf[3];
@@ -57,17 +57,23 @@ int main(void)
 //	while( !rx_ok );
 
 	// Should be in API mode now
-	uint8_t buf[22] = {0x7E, 0x00, 0x04, 0x08, 0x07, 'T', 'P', 0x00};
+//	uint8_t buf[22] = {0x7E, 0x00, 0x04, 0x08, 0x07, 'W', 'R', 0x00};
+//
+//	__delay_cycles(10000000);
+//	buf[7] = calculate_checksum(buf+3,4);
+//
+//	uart_send_frame(buf);
 
-	__delay_cycles(10000000);
-	buf[7] = calculate_checksum(buf+3,4);
 
-	uart_send_frame(buf);
+	xbee_init();
 
+	while(1)
+	{
+		__delay_cycles(8000000);
+		xbee_tx_packet( 100, "Hi!", 3 );
+	}
 
-//	xbee_init();
-
-	while(1);
+//	while(1);
 
 	return 0;
 }
