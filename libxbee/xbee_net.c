@@ -12,7 +12,7 @@
 /*
  * Global Variables
  */
-static volatile uint8_t cts = 0;		// 0 if clear to send or stores error code
+static volatile uint8_t cts = 1;		// 0 if clear to send or stores error code
 
 /*
  * Local function declarations
@@ -56,11 +56,11 @@ uint8_t xbee_init()
 {
 	uint8_t ret = 0;
 
-	uart_init();
+//	uart_init();
 
 	set_IP_addr_mode();
 
-	if( !(ret = cts) )	// Yes, it's supposed to be a single '='
+	if( !(ret = cts) )	// Yes, it's supposed to be a single '=', cts is set everytime we transmit data
 	{
 		set_SSID();
 		if( !(ret = cts) )
@@ -99,7 +99,7 @@ void set_IP_addr_mode()
 // Sets Access point SSID
 void set_SSID()
 {
-	uint8_t buf[] = {0x7E, 0, 15, 0x08, 0, 'I', 'D', 'E', 'R', 'R', 'O', 'R', 0}; // SSID is "ERROR"
+	uint8_t buf[] = {0x7E, 0, 9, 0x08, 0, 'I', 'D', 'E', 'R', 'R', 'O', 'R', 0}; // SSID is "ERROR"
 
 	while(!cts);
 	cts = 1;
@@ -109,7 +109,7 @@ void set_SSID()
 
 void set_encryption_type()
 {
-	uint8_t buf[] = {0x7E, 0, 15, 0x08, 0, 'E', 'E', 2, 0};		// Encryption is WPA2
+	uint8_t buf[] = {0x7E, 0, 5, 0x08, 0, 'E', 'E', 2, 0};		// Encryption is WPA2
 
 	while(!cts);
 	cts = 1;
@@ -119,8 +119,8 @@ void set_encryption_type()
 
 void set_encryption_password()
 {
-	// Yes, this is my wi-fi password, come mooch off my Internet if you want.
-	uint8_t buf[] = {0x7E, 0, 15, 0x08, 0, 'P', 'K', 't', 'o', 'm', 'a', 'h', 'a', 'w', 'k', 0};
+	// Yes, this is my wi-fi password, come mooch off my Internet if you want....
+	uint8_t buf[] = {0x7E, 0, 12, 0x08, 0, 'P', 'K', 't', 'o', 'm', 'a', 'h', 'a', 'w', 'k', 0};
 
 	while(!cts);
 	cts = 1;
@@ -130,12 +130,32 @@ void set_encryption_password()
 
 void set_IP_address()
 {
+	uint8_t buf[] = IP_ADDR_STR;
 
+	buf[0] = 0x7E;
+	buf[1] = 0;
+	buf[2] = IP_ADDR_STR_LEN;
+	buf[3] = 0x08;
+
+	while( !cts );
+	cts = 1;
+	send_data( buf );
+	while( cts == 1 );
 }
 
 void set_gateway()
 {
+	uint8_t buf[] = GATEWAY_STR;
 
+	buf[0] = 0x7E;
+	buf[1] = 0;
+	buf[2] = GATEWAY_STR_LEN;
+	buf[3] = 0x08;
+
+	while( !cts );
+	cts = 1;
+	send_data( buf );
+	while( cts == 1 );
 }
 
 // Prints frame to LCD, for debugging purposes

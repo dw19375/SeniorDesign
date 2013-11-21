@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "lcd20.h"
 #include "xbee_uart.h"
+#include "xbee_net.h"
 
 static uint8_t bytes_rx = 0;
 
@@ -24,6 +25,10 @@ int main(void)
 	lcdinit();
 	uart_init();
 
+
+	// Set the frame receive handler
+	frame_recv_handler( frame_rx_handler );
+
 	__bis_SR_register(GIE);
 
 //	uint8_t str[8] = {'+','+','+',0x00};
@@ -39,12 +44,14 @@ int main(void)
 //	str[5] = '1';
 //	str[6] = 0x0D;
 //	str[7] = 0x00;
+//	rx_ok = 0;
 //	uart_send_frame(str);
 //
 //	while( !rx_ok );
 //	str[2] = 'C';
 //	str[3] = 'N';
 //	str[4] = ' ';
+//	rx_ok = 0;
 //	uart_send_frame(str);
 //
 //	while( !rx_ok );
@@ -52,10 +59,13 @@ int main(void)
 	// Should be in API mode now
 	uint8_t buf[22] = {0x7E, 0x00, 0x04, 0x08, 0x07, 'T', 'P', 0x00};
 
-//	__delay_cycles(10000000);
+	__delay_cycles(10000000);
 	buf[7] = calculate_checksum(buf+3,4);
 
 	uart_send_frame(buf);
+
+
+//	xbee_init();
 
 	while(1);
 
@@ -75,6 +85,9 @@ __interrupt void USCIA0RX_ISR(void)
 		// Clear the interrupt flag
 		IFG2 &= ~UCA0RXIFG;
 
+		// Receive the next byte
+		uart_recv_next_byte();
+
 		// Shift byte into rx_buf
 		rx_buf[0] = rx_buf[1];
 		rx_buf[1] = rx_buf[2];
@@ -93,11 +106,12 @@ __interrupt void USCIA0RX_ISR(void)
 				rx_ok = 0;
 		}
 
-		if( bytes_rx < 40 )
-		{
-			bytes_rx++;
-			hex2Lcd( UCA0RXBUF );
-		}
+//		if( bytes_rx < 40 )
+//		{
+//			bytes_rx++;
+//			hex2Lcd( UCA0RXBUF );
+//		}
+//		lcdData( UCA0RXBUF );
 	}
 }
 
@@ -112,6 +126,9 @@ __interrupt void USCIA0TX_ISR(void)
 	{
 		// Clear the interrupt flag
 		IFG2 &= ~UCA0TXIFG;
+
+//		hex2Lcd( UCA0TXBUF );
+//		lcdData( UCA0TXBUF );
 
 		// Transmit next byte of frame
 		uart_transmit_next_byte();

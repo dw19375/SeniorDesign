@@ -57,7 +57,7 @@ void send_data( uint8_t* buf )
 		// len reflects length of whole buffer, not just data part
 		uint16_t len = ( ((uint16_t)buf[1]) << 8 ) + buf[2] + 4;
 
-		buf[3] = ++seq;
+		buf[4] = ++seq;
 		buf[len-1] = calculate_checksum(buf+3, len-4);
 
 		uart_send_frame( buf );
@@ -71,7 +71,7 @@ void send_data( uint8_t* buf )
  */
 void frame_recv_handler( void (*new_handler)() )
 {
-	void (*handler)() = 0x00;
+	static void (*handler)() = 0x00;
 
 	if( 0x00 == new_handler )
 	{
