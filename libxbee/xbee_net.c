@@ -7,7 +7,7 @@
 
 
 #include "xbee_net.h"
-#include "lcd20.h"
+//#include "lcd20.h"
 
 /*
  * Global Variables
@@ -18,14 +18,14 @@ static volatile uint8_t mstat = 0;		// Modem status from XBee.  2 if associated 
 /*
  * Local function declarations
  */
-void print_frame( uint8_t* buf );
+//void print_frame( uint8_t* buf );
 void frame_rx_handler();
 void set_IP_addr_mode();
 void set_SSID();
 void set_encryption_type();
 void set_encryption_password();
 void set_mask();
-void set_IP_address();
+void set_IP_address( char* ip );
 void set_gateway();
 
 /*
@@ -48,22 +48,22 @@ void frame_rx_handler()
 				cts = 0;
 			}
 
-			lcdData('|');
-			lcdData(buf[5]);
-			lcdData(buf[6]);
-			hex2Lcd(buf[7]);
+//			lcdData('|');
+//			lcdData(buf[5]);
+//			lcdData(buf[6]);
+//			hex2Lcd(buf[7]);
 			break;
 
 		case 0x89:			// Tx Status
 			// Have received response, can send new frames now
 			cts = 0;
-			print_frame( (uint8_t*) buf );
+//			print_frame( (uint8_t*) buf );
 			break;
 
 		case 0x8A:			// Modem status
 			mstat = buf[4];
 		case 0xFE:			// Frame Error
-			print_frame( (uint8_t*) buf );
+//			print_frame( (uint8_t*) buf );
 			break;
 
 		case 0xB0:			// Rx packet
@@ -148,8 +148,10 @@ void xbee_tx_packet( uint8_t ip, uint8_t* buf, uint8_t len )
 /*
  * Initializes UART and XBee network parameters
  * Returns 0 on success, non-zero on failure
+ * ip is string of lowest 8 bits of IP address, represented
+ * as a decimal string
  */
-uint8_t xbee_init()
+uint8_t xbee_init( char* ip )
 {
 	uint8_t ret = 0;
 
@@ -171,7 +173,7 @@ uint8_t xbee_init()
 #if USE_DHCP == 1
 				if( !(ret = cts) )
 				{
-					set_IP_address();
+					set_IP_address( ip );
 					if( !(ret = cts) )
 					{
 						set_mask();
@@ -248,7 +250,9 @@ void set_mask()
 	while( cts == 1 );
 }
 
-void set_IP_address()
+// ip is a 3 character string containing lowest 3 digits of IP
+// address of node, e.g., ip = "128" for 192.168.1.128
+void set_IP_address( char* ip )
 {
 	uint8_t buf[] = IP_ADDR_STR;
 
@@ -256,6 +260,13 @@ void set_IP_address()
 	buf[1] = 0;
 	buf[2] = IP_ADDR_STR_LEN;
 	buf[3] = 0x08;
+
+	if( ip )
+	{
+		buf[17] = ip[0];
+		buf[18] = ip[1];
+		buf[19] = ip[2];
+	}
 
 	while( cts );
 	cts = 1;
@@ -279,13 +290,13 @@ void set_gateway()
 }
 
 // Prints frame to LCD, for debugging purposes
-void print_frame( uint8_t* buf )
-{
-	int i;
-
-	lcdData('|');
-
-	// Length stored in buf[2]
-	for( i = 3; i < buf[2]; i++ )
-		hex2Lcd( buf[i] );
-}
+//void print_frame( uint8_t* buf )
+//{
+//	int i;
+//
+//	lcdData('|');
+//
+//	// Length stored in buf[2]
+//	for( i = 3; i < buf[2]; i++ )
+//		hex2Lcd( buf[i] );
+//}

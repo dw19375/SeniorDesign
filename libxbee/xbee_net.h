@@ -26,7 +26,7 @@
 /*
  * Function declarations
  */
-uint8_t xbee_init();
+uint8_t xbee_init( char* ip );
 void packet_rx_handler( void (*new_handler)() );
 void xbee_tx_packet( uint8_t ip, uint8_t* buf, uint8_t len );
 

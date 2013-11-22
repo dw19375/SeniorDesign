@@ -3,169 +3,124 @@
 #include "delay.h"
 #include "onewire.h"
 #include "ds18b20.h"
-#include "lcd20.h"
-//#include "spi.h"
+#include "xbee_uart.h"
+#include "xbee_net.h"
 
-uint8_t bytes_rx = 0;
+
+#define MY_IP "130"
+#define PRECESION 1				// Set precesion of temperature sensor to 10-bit (1)
+
+void timer_delay_ms( uint16_t t );
+
+// Delay time for timer delays
+uint16_t delay_time = 0;
 
 /*
  * main.c
  */
 int main(void) {
-	int xpos = 0, begin_xpos;
 	int16_t temp = 0;
+	uint8_t data[4] = {0, 0, 0, 0};
 
 	WDTCTL = WDTPW + WDTHOLD; //Stop watchdog timer
 	BCSCTL1 = CALBC1_8MHZ;
 	DCOCTL = CALDCO_8MHZ;
+	P1DIR |= BIT6;
 
-	P1DIR |= 0x48;
+	// Timer A0 setup
+	CCR0 = 8000;
+	TACTL = TASSEL_2 + MC_1;          		  // SMCLK, upmode, /1
+
+	// Initialize UART
+	uart_init();
 
 	// Initialize 1-wire port and set precision to 10 bits.
 	temp_init();
-	set_precision( 1 );
+	set_precision( PRECESION );
 
-	__delay_cycles(20000000);
-	lcdinit();
+	// Enable interrupts
+	_BIS_SR(GIE);
 
-//	lcdData('H');
-//	lcdData('e');
-	// Initialize SPI port
-//	spi_init();
-
-//	lcdData('l');
-//	lcdData('l');
-	prints("Temp: ");
-	xpos += 6;
-//	gotoXy(12,0);
-//	prints(" deg. C");
-
-	// Clear the interrupt flags
-//	IFG2 = 0;
-//	__bis_SR_register(GIE);
-
-	begin_xpos = xpos;
-//	lcdData('o');
-	while( 1 )
+	// Initialize XBee
+	if( !xbee_init( MY_IP ) )
 	{
-		int i;
-		volatile uint8_t* rx_data;
+		while( 1 )
+		{
+			// Get temperature
+			start_conversion();
+			timer_delay_ms( TEMP_READ_DELAY << PRECESION );
+			temp = get_temp();
 
-//		gotoXy(0,1);
-//		lcdData('R');
-//		gotoXy(0,2);
+			// Send temp data on wifi
+			data[0] = (temp >> 8) & 0x00FF;
+			data[1] = temp & 0x00FF;
 
-//		uint8_t buf[22] = {0x7E, 0x00, 0x04, 0x08, 0x07, 'T', 'P', 0x00};
-//		buf[7] = calculate_checksum(buf+3,4);
+			xbee_tx_packet( 100, data, 4 );
 
-//		spi_send_frame(buf);
-
-//		for(i=0; i<64; i++)
-//		{
-//			lcdData(' ');
-//		}
-
-//		__delay_cycles(100000);
-
-//		for( i=0; i<8; i++ )
-//		{
-//			P1OUT &= ~(BIT0);
-//			__delay_cycles(100);
-//
-//			UCA0TXBUF = buf[i];
-//
-//			__delay_cycles(100);
-//			P1OUT |= BIT0;
-//		}
-//
-//		for( ; i<40; i++ )
-//		{
-//			P1OUT &= ~(BIT0);
-//			__delay_cycles(100);
-//
-//			UCA0TXBUF = 0x00;
-//
-//			__delay_cycles(100);
-//			P1OUT |= BIT0;
-//		}
-
-
-//		gotoXy(1,1);
-//		lcdData('x');
-//		gotoXy(0,3);
-
-//		while( !(rx_data=spi_get_frame()) )		// Wait until we receive whole frame
-//		{
-//			__delay_cycles(100000);
-//		}
-
-		// Write frame just received to LCD.
-//		gotoXy(2,1);
-//		prints("x: ");
-//		for( i=0; i < rx_data_len && i < MAX_BUF_LEN; i++ )
-//		{
-//			hex2Lcd( rx_data[i] );
-//		}
-
-		temp = read_temp();
-
-		gotoXy(xpos,0);
-		xpos += integerToLcd( temp >> 4 );	// Divide by 16 to display integer part
-		xpos += dec2ToLcd( temp >> 2 );		// Want fractional part in lowest two bits
-
-		gotoXy(xpos,0);
-		prints(" deg. C");
-
-		xpos = begin_xpos;
-	
-//		_BIS_SR(LPM0_bits + GIE);
+			timer_delay_ms(1000);
+		}
 	}
-//	return 0;
 }
 
 /*
- * Interrupt handler for SPI receive
+ * Uses timer to delay t milliseconds
  */
-//#pragma vector=USCIAB0RX_VECTOR
-//__interrupt void USCIA0RX_ISR(void)
-//{
-//	if( IFG2 & UCA0RXIFG )
-//	{
-//		// Clear the interrupt flag
-//		IFG2 &= ~UCA0RXIFG;
-//
-////		if( !(IE2 & UCA0TXIE) )
-////			hex2Lcd( UCA0RXBUF );
-//
-//		if( bytes_rx < 40 )
-//		{
-//			bytes_rx++;
-//			hex2Lcd( UCA0RXBUF );
-//		}
-//
-//	    // Receive next byte of frame
-//	    //spi_recv_frame();
-//
-//	    // Receive next byte of frame, will return if nothing to send
-//	    //spi_transmit_frame();
-//	}
-//  //hex2Lcd( UCA0RXBUF );
-//}
-//
-///*
-// * Interrupt handler for SPI transmit
-// */
-//#pragma vector=USCIAB0TX_VECTOR
-//__interrupt void USCIA0TX_ISR(void)
-//{
-//	if( IFG2 & UCA0TXIFG )
-//	{
-//		// Clear the interrupt flag
-//		IFG2 &= ~UCA0TXIFG;
-//
-//		// Receive next byte of frame
-//		//spi_transmit_frame();
-//	}
-//	P1OUT ^= 0x40;
-//	//hex2Lcd( UCA0TXBUF );
-//}
+void timer_delay_ms( uint16_t t )
+{
+	CCTL0 |= CCIE;                             // CCR0 interrupt enabled
+	P1OUT |= BIT6;
+
+	delay_time = t;
+	_BIS_SR(LPM0_bits + GIE);                 // Enter LPM0 w/ interrupt
+
+	P1OUT &= ~BIT6;
+	CCTL0 &= ~CCIE;                             // CCR0 interrupt disabled
+}
+
+/*
+ * Interrupt handler for UART receive
+ */
+#pragma vector=USCIAB0RX_VECTOR
+__interrupt void USCIA0RX_ISR(void)
+{
+	if( IFG2 & UCA0RXIFG )
+	{
+		// Clear the interrupt flag
+		IFG2 &= ~UCA0RXIFG;
+
+		// Receive the next byte
+		uart_recv_next_byte();
+	}
+}
+
+/*
+ * Interrupt handler for SPI transmit
+ */
+#pragma vector=USCIAB0TX_VECTOR
+__interrupt void USCIA0TX_ISR(void)
+{
+	if( IFG2 & UCA0TXIFG )
+	{
+		// Clear the interrupt flag
+		IFG2 &= ~UCA0TXIFG;
+
+		// Transmit next byte of frame
+		uart_transmit_next_byte();
+	}
+}
+
+// Timer A0 interrupt service routine
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void Timer_A (void)
+{
+	/*
+	 * This is intended to interrupt every ~1ms (8 MHz clock)
+	 */
+	if( delay_time )
+	{
+		delay_time--;
+
+		if( !delay_time )
+			_bic_SR_register_on_exit( LPM0_bits );
+	}
+}
