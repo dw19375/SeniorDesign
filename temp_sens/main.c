@@ -25,7 +25,6 @@ int main(void) {
 	WDTCTL = WDTPW + WDTHOLD; //Stop watchdog timer
 	BCSCTL1 = CALBC1_8MHZ;
 	DCOCTL = CALDCO_8MHZ;
-	P1DIR |= BIT6;
 
 	// Timer A0 setup
 	CCR0 = 8000;
@@ -68,12 +67,10 @@ int main(void) {
 void timer_delay_ms( uint16_t t )
 {
 	CCTL0 |= CCIE;                             // CCR0 interrupt enabled
-	P1OUT |= BIT6;
 
 	delay_time = t;
 	_BIS_SR(LPM0_bits + GIE);                 // Enter LPM0 w/ interrupt
 
-	P1OUT &= ~BIT6;
 	CCTL0 &= ~CCIE;                             // CCR0 interrupt disabled
 }
 
