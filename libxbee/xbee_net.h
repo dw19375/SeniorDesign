@@ -23,6 +23,36 @@
 
 #define USE_DHCP 1			// 0 for DHCP, 1 for Static IP
 
+// Packet types
+#define TEMP_DATA 0x0001
+#define VENT_CMD  0x0002
+#define USER_CMD  0x0004
+#define ACK       0x8000
+
+/*
+ * Type definitions
+ */
+typedef struct vent_cmd_s
+{
+	uint16_t	type;		// Type of packet being sent
+	uint16_t	cmd;		// Vent command
+	uint16_t	seq;		// Sequence number of packet
+}vent_cmd;
+
+typedef struct temp_data_s
+{
+	uint16_t	type;		// Type of packet
+	uint16_t	temp;		// Temperature
+	uint16_t	humid;		// Humidity
+}temp_data;
+
+typedef struct ack_s
+{
+	uint16_t	type;		// Type of packet
+	uint16_t	seq;		// Sequence number to acknowledge
+}ack;
+
+
 /*
  * Function declarations
  */
