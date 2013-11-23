@@ -4,7 +4,7 @@
 #include "xbee_net.h"
 
 #define BATTERY_CHECK_T 1			// Battery voltage checked at least this often (in seconds).
-#define MAX_PULSE_T     1			// Number of seconds to run the servo when changing position
+#define MAX_PULSE_T     1500l		// Number of ms to run the servo when changing position
 #define VENT_CLOSED_T   2025		// Timer half period when vent is closed
 #define VENT_OPENED_T	1094		// Timer half period when vent is opened
 #define MY_IP			"129"
@@ -22,6 +22,7 @@ void set_servo( uint16_t pos );
 uint32_t delay_time = 0;
 uint16_t pulse_count = 0;		// Count of pulses sent to servo
 uint16_t ack_to_send = 0;
+uint16_t servo_per = 0;
 
 /*
  * main.c
@@ -63,6 +64,12 @@ int main(void) {
 				ack_to_send = 0;
 			}
 
+			if( servo_per )
+			{
+				set_servo( servo_per );
+				servo_per = 0;
+			}
+
 			// May be cut short by an incoming packet, but that's OK
 			timer_delay_ms( BATTERY_CHECK_T * 1000 );		// Go to sleep
 		}
@@ -91,12 +98,12 @@ void vent_packet_rx_handler()
 			if( c->cmd )
 			{
 				// Open vent
-				set_servo( VENT_OPENED_T );
+				servo_per = VENT_OPENED_T;
 			}
 			else
 			{
 				// Close vent
-				set_servo( VENT_CLOSED_T );
+				servo_per = VENT_CLOSED_T;
 			}
 
 			// Can't send ACK here (requires interrupts), so save seq. number to do it later
@@ -115,7 +122,7 @@ void vent_packet_rx_handler()
 void set_servo( uint16_t pos )
 {
 	delay_time = 0;
-	pulse_count = MAX_PULSE_T * pos;
+	pulse_count = 1000*MAX_PULSE_T / pos;
 
 	TACTL &= ~MC_3;		// Halt Timer
 	CCR0 = pos;			// Set new period
@@ -129,14 +136,14 @@ void set_servo( uint16_t pos )
  */
 void timer_delay_ms( uint32_t t )
 {
-	CCTL0 |= CCIE;                             // CCR0 interrupt enabled
-
+	TACTL &= ~MC_3;		// Halt Timer
 	CCR0 = 1000;
+	TACTL |= MC_1;		// Up mode
 
 	delay_time = t;
-	_BIS_SR(LPM0_bits + GIE);                 // Enter LPM0 w/ interrupt
+	CCTL0 |= CCIE;                             // CCR0 interrupt enabled
 
-	CCTL0 &= ~CCIE;                             // CCR0 interrupt disabled
+	_BIS_SR(LPM0_bits + GIE);                 // Enter LPM0 w/ interrupt
 }
 
 /*
@@ -153,8 +160,8 @@ __interrupt void USCIA0RX_ISR(void)
 		// Receive the next byte
 		uart_recv_next_byte();
 
-		if( ack_to_send )
-			_bic_SR_register_on_exit( LPM0_bits );
+		if( ack_to_send ) // ack_to_send is nonzero when we need to move the servo as well.
+			_bic_SR_register_on_exit( LPM0_bits );		// Get out of low power mode if we need to send an ACK
 	}
 }
 
@@ -184,9 +191,6 @@ __interrupt void Timer_A (void)
 		 * If delay time is set, we use this timer to delay.
 		 */
 		delay_time--;
-
-		if( !delay_time )
-			_bic_SR_register_on_exit( LPM0_bits );
 	}
 	else if( pulse_count )
 	{
@@ -197,9 +201,12 @@ __interrupt void Timer_A (void)
 		if( !pulse_count )
 		{
 			P2OUT &= ~BIT3;
-			CCTL0 &= ~CCIE;                             // CCR0 interrupt disabled
-			_bic_SR_register_on_exit( LPM0_bits );		// Get out of low power mode
 		}
+	}
+	else
+	{
+		CCTL0 &= ~CCIE;                             // CCR0 interrupt disabled
+		_bic_SR_register_on_exit( LPM0_bits );
 	}
 
 }
