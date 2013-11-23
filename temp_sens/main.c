@@ -53,7 +53,7 @@ int main(void) {
 			// Send temp data on wifi
 			data.temp = temp >> 2;
 
-			xbee_tx_packet( 100, (uint8_t*)&data, sizeof(data) );
+			xbee_tx_packet( MAIN_IP, (uint8_t*)&data, sizeof(data) );
 
 			timer_delay_ms(DATA_SEND_T * 1000);
 		}

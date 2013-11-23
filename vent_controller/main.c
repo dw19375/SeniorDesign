@@ -4,7 +4,7 @@
 #include "xbee_net.h"
 
 #define BATTERY_CHECK_T 1			// Battery voltage checked at least this often (in seconds).
-#define MAX_PULSE_T     2			// Number of seconds to run the servo when changing position
+#define MAX_PULSE_T     1			// Number of seconds to run the servo when changing position
 #define VENT_CLOSED_T   2025		// Timer half period when vent is closed
 #define VENT_OPENED_T	1094		// Timer half period when vent is opened
 #define MY_IP			"129"
@@ -115,7 +115,7 @@ void vent_packet_rx_handler()
 void set_servo( uint16_t pos )
 {
 	delay_time = 0;
-	pulse_count = MAX_PULSE_T * 2 * pos;
+	pulse_count = MAX_PULSE_T * pos;
 
 	TACTL &= ~MC_3;		// Halt Timer
 	CCR0 = pos;			// Set new period
