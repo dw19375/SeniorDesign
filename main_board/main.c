@@ -30,8 +30,44 @@ static uint8_t ack_timer = 0;							// Counter for ACK timeouts
 int main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
+	BCSCTL1 = CALBC1_8MHZ;
+	DCOCTL = CALDCO_8MHZ;
 
-    // Run all the initialization functions for the xbee, temp. sensor, etc.
+	// Timer A0 setup
+	CCR0 = 8000;
+	TACTL = TASSEL_2 + MC_1;          		  // SMCLK, upmode, /1
+
+	// Initialize UART
+	uart_init();
+
+	// Initialize 1-wire port and set precision to 10 bits.
+	temp_init();
+	set_precision( PRECESION );
+
+	// Initialize LCD
+	lcdinit();
+
+	// Enable interrupts
+	_BIS_SR(GIE);
+
+	// Initialize XBee
+	if( !xbee_init( MY_IP ) )
+	{
+		while( 1 )
+		{
+			// Get temperature
+			start_conversion();
+			timer_delay_ms( TEMP_READ_DELAY << PRECESION );
+			temp = get_temp();
+
+			// Send temp data on wifi
+			data.temp = temp >> 2;
+
+			xbee_tx_packet( MAIN_IP, (uint8_t*)&data, sizeof(data) );
+
+			timer_delay_ms(LOOP_DELAY * 1000);
+		}
+	}
 	
 	return 0;
 }
@@ -120,6 +156,19 @@ uint8_t IP2room( uint8_t ip )
 	}
 
 	return retval;
+}
+
+/*
+ * Uses timer to delay t milliseconds
+ */
+void timer_delay_ms( uint32_t t )
+{
+	CCTL0 |= CCIE;                             // CCR0 interrupt enabled
+
+	delay_time = t;
+	_BIS_SR(LPM0_bits + GIE);                 // Enter LPM0 w/ interrupt
+
+	CCTL0 &= ~CCIE;                             // CCR0 interrupt disabled
 }
 
 /*
