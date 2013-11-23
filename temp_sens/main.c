@@ -6,21 +6,21 @@
 #include "xbee_uart.h"
 #include "xbee_net.h"
 
-
+#define DATA_SEND_T 60l			// Number of seconds between data samples
 #define MY_IP "130"
 #define PRECESION 1				// Set precesion of temperature sensor to 10-bit (1)
 
-void timer_delay_ms( uint16_t t );
+void timer_delay_ms( uint32_t t );
 
 // Delay time for timer delays
-uint16_t delay_time = 0;
+uint32_t delay_time = 0;
 
 /*
  * main.c
  */
 int main(void) {
 	int16_t temp = 0;
-	uint8_t data[4] = {0, 0, 0, 0};
+	temp_data data = {TEMP_DATA, 0, 0};
 
 	WDTCTL = WDTPW + WDTHOLD; //Stop watchdog timer
 	BCSCTL1 = CALBC1_8MHZ;
@@ -51,12 +51,11 @@ int main(void) {
 			temp = get_temp();
 
 			// Send temp data on wifi
-			data[0] = (temp >> 8) & 0x00FF;
-			data[1] = temp & 0x00FF;
+			data.temp = temp >> 2;
 
-			xbee_tx_packet( 100, data, 4 );
+			xbee_tx_packet( 100, (uint8_t*)&data, sizeof(data) );
 
-			timer_delay_ms(1000);
+			timer_delay_ms(DATA_SEND_T * 1000);
 		}
 	}
 }
@@ -64,7 +63,7 @@ int main(void) {
 /*
  * Uses timer to delay t milliseconds
  */
-void timer_delay_ms( uint16_t t )
+void timer_delay_ms( uint32_t t )
 {
 	CCTL0 |= CCIE;                             // CCR0 interrupt enabled
 
