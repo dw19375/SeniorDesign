@@ -18,11 +18,13 @@
 int main(int argc, char *argv[])
 {
 	int sockfd;
+  unsigned char buf[10];
+  int i, l;
 	struct addrinfo hints, *servinfo, *p;
 	int rv;
 	int numbytes;
 
-	if (argc != 3) {
+	if (argc < 3) {
 		fprintf(stderr,"usage: talker hostname message\n");
 		exit(1);
 	}
@@ -51,8 +53,15 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "talker: failed to bind socket\n");
 		return 2;
 	}
+	
+	l=0;
+	for( i=2; i<argc && i<10; i++ )
+  {
+    l++;
+    buf[i-2] = atoi(argv[i]) & 0x00FF;
+  }
 
-	if ((numbytes = sendto(sockfd, argv[2], strlen(argv[2]), 0,
+	if ((numbytes = sendto(sockfd, buf, l, 0,
 			 p->ai_addr, p->ai_addrlen)) == -1) {
 		perror("talker: sendto");
 		exit(1);

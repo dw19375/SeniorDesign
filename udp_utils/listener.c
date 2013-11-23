@@ -96,7 +96,7 @@ int main(void)
     
     for( i=0; i<numbytes && i<MAXBUFLEN; i++ )
     {
-      printf("%.2X ", buf[i]);
+      printf("%.2X ", (unsigned char)buf[i]);
       
       if( !(i%16) && i )
         putchar('\n');
