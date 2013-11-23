@@ -23,6 +23,7 @@
 
 #define USE_DHCP 1			// 0 for DHCP, 1 for Static IP
 
+#define MAIN_IP	  100		// Address of main control board.
 // Packet types
 #define TEMP_DATA 0x0001
 #define VENT_CMD  0x0002
@@ -32,6 +33,14 @@
 /*
  * Type definitions
  */
+typedef struct user_cmd_s		// Jeff, please correct this
+{
+	uint16_t	seq;		// Sequence number
+	int16_t		temp;		// Desired temperature
+	uint16_t	room;		// Priority room
+	uint16_t	sys;		// System (heat or AC) to use
+}user_cmd;
+
 typedef struct vent_cmd_s
 {
 	uint16_t	type;		// Type of packet being sent
@@ -42,8 +51,8 @@ typedef struct vent_cmd_s
 typedef struct temp_data_s
 {
 	uint16_t	type;		// Type of packet
-	uint16_t	temp;		// Temperature
-	uint16_t	humid;		// Humidity
+	int16_t		temp;		// Temperature
+	int16_t		humid;		// Humidity
 }temp_data;
 
 typedef struct ack_s
