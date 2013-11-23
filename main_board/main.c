@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include "lcd20.h"
 #include "ds18b20.h"
+#include "xbee_net.h"
+#include "xbee_uart.h"
 #include "main_board.h"
 
 /**************************************************************************************************
@@ -16,8 +18,10 @@
  * The index into temperature and humidity arrays is the room number
  */
 static int temperature[NUM_ROOMS] = {88, 88};			// Initialize temperature to 22 deg. C
-static uint8_t humidity[NUM_ROOMS] = {50, 50};				// Initialize humidity to 50%
+static int humidity[NUM_ROOMS] = {50, 50};				// Initialize humidity to 50%
 static uint8_t priority_room = 0;
+static uint8_t system = 0;								// 0 for off, 1 for AC, 2 for heat
+static uint8_t ack_timer = 0;							// Counter for ACK timeouts
 
 
 /*
@@ -33,19 +37,65 @@ int main(void)
 }
 
 /*
+ * Called when we have received a UDP packet.
+ * Parses packet
+ * 	If it is an ACK, resets the timeout counter
+ * 	If it is temperature data, updates local values
+ */
+void main_board_packet_rx_handler()
+{
+	// Get pointer to packet
+	volatile uint8_t* p = uart_get_frame();
+
+	// Check if packet is valid, data starts at p[14]
+	if( p && p[2] > 14 && verify_checksum((uint8_t*)p+3, p[2]-3) )
+	{
+		// data starts at p[14]
+		uint16_t type = *((int*)(&p[14]));		// Get int at p[14] and p[15], with proper byte order
+
+		switch(type)
+		{
+			case TEMP_DATA:
+				parse_temp_packet( p );
+				break;
+			case USER_CMD:
+				parse_user_packet( p );
+				break;
+			case ACK:
+				ack_timer = 0;
+				break;
+			default:
+				break;
+		}
+	}
+}
+
+/*
  * Parses a user packet that was just received.
  *
  * Inputs:
  * 		p - pointer to XBee receive frame - see XBee datasheet, pg. 92 (Rx Packet IPv4)
- * 		    The receive frame starts at byte 3 (i.e. it does not include the initial 0x7E
- * 		    or the two byte length)
+ * 		Can assume p is valid and receive frame is valid
  */
 void parse_user_packet( uint8_t* p )
 {
-	if( p )
-	{
 
-	}
+}
+
+/*
+ * Parses a packet from a temperature sensor
+ *
+ * Inputs:
+ * 		p - pointer to XBee receive frame - see XBee datasheet, pg. 92 (Rx Packet IPv4)
+ * 		Can assume p is valid and receive frame is valid
+ */
+void parse_temp_packet( uint8_t* p )
+{
+	temp_data* q = (temp_data*)(p+14);
+	uint8_t rm = IP2room( p[7] );		// Source address is at offset 4, lowest byte at offset 7
+
+	temperature[rm] = q->temp;
+	humidity[rm] = q->humid;
 }
 
 /*
@@ -64,10 +114,61 @@ uint8_t IP2room( uint8_t ip )
 	uint8_t retval = 0;
 
 	// One IP for each temp sensor, and one for vent controller
-	if( ip >= IP_START && ip < IP_START + 2*NUM_ROOMS )
+	if( ip >= MAIN_IP && ip < MAIN_IP + 2*NUM_ROOMS )
 	{
-		retval = (ip - IP_START) >> 1;		// Return (ip - IP_START)/2
+		retval = (ip - MAIN_IP) >> 1;		// Return (ip - MAIN_IP)/2
 	}
 
 	return retval;
+}
+
+/*
+ * Interrupt handler for UART receive
+ */
+#pragma vector=USCIAB0RX_VECTOR
+__interrupt void USCIA0RX_ISR(void)
+{
+	if( IFG2 & UCA0RXIFG )
+	{
+		// Clear the interrupt flag
+		IFG2 &= ~UCA0RXIFG;
+
+		// Receive the next byte
+		uart_recv_next_byte();
+
+		if( ack_to_send ) // ack_to_send is nonzero when we need to move the servo as well.
+			_bic_SR_register_on_exit( LPM0_bits );		// Get out of low power mode if we need to send an ACK
+	}
+}
+
+/*
+ * Interrupt handler for UART transmit
+ */
+#pragma vector=USCIAB0TX_VECTOR
+__interrupt void USCIA0TX_ISR(void)
+{
+	if( IFG2 & UCA0TXIFG )
+	{
+		// Clear the interrupt flag
+		IFG2 &= ~UCA0TXIFG;
+
+		// Transmit next byte of frame
+		uart_transmit_next_byte();
+	}
+}
+
+// Timer A0 interrupt service routine
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void Timer_A (void)
+{
+	/*
+	 * This is intended to interrupt every ~1ms (8 MHz clock)
+	 */
+	if( delay_time )
+	{
+		delay_time--;
+
+		if( !delay_time )
+			_bic_SR_register_on_exit( LPM0_bits );
+	}
 }

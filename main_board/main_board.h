@@ -12,6 +12,13 @@
  * Constants
  */
 #define NUM_ROOMS 2
-#define IP_START 128 			// Starting (lowest) IP address
+
+/*
+ * Functions
+ */
+void main_board_packet_rx_handler();
+void parse_user_packet( uint8_t* p );
+void parse_temp_packet( uint8_t* p );
+uint8_t IP2room( uint8_t ip );
 
 #endif /* MAIN_BOARD_H_ */
