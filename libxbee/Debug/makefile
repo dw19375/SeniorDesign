@@ -109,11 +109,8 @@ endif
 # All Target
 all: libxbee.lib
 
-dependents:
-	-cd /home/dan/College/3ece445/liblcd/Debug && $(MAKE) all
-
 # Tool invocations
-libxbee.lib: $(OBJS) $(OBJ_SRCS) $(LIB_SRCS) /home/dan/College/3ece445/liblcd/Debug/liblcd.lib
+libxbee.lib: $(OBJS) $(OBJ_SRCS) $(LIB_SRCS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Archiver'
 	"/opt/ti/ccsv5/tools/compiler/msp430_4.2.1/bin/ar430" r "libxbee.lib" $(ORDERED_OBJS)
@@ -130,7 +127,6 @@ clean:
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/dan/College/3ece445/liblcd/Debug/liblcd.lib:
 
 -include ../makefile.targets
 

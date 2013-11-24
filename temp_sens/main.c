@@ -6,9 +6,9 @@
 #include "xbee_uart.h"
 #include "xbee_net.h"
 
-#define DATA_SEND_T 60l			// Number of seconds between data samples
+#define DATA_SEND_T 2l			// Number of seconds between data samples
 #define MY_IP "130"
-#define PRECESION 1				// Set precesion of temperature sensor to 10-bit (1)
+#define PRECISION 1				// Set precesion of temperature sensor to 10-bit (1)
 
 void timer_delay_ms( uint32_t t );
 
@@ -35,7 +35,7 @@ int main(void) {
 
 	// Initialize 1-wire port and set precision to 10 bits.
 	temp_init();
-	set_precision( PRECESION );
+	set_precision( PRECISION );
 
 	// Enable interrupts
 	_BIS_SR(GIE);
@@ -47,13 +47,13 @@ int main(void) {
 		{
 			// Get temperature
 			start_conversion();
-			timer_delay_ms( TEMP_READ_DELAY << PRECESION );
+			timer_delay_ms( TEMP_READ_DELAY << PRECISION );
 			temp = get_temp();
 
 			// Send temp data on wifi
-			data.temp = temp >> 2;
+			data.temp = temp >> ( 3-PRECISION );
 
-			xbee_tx_packet( MAIN_IP, (uint8_t*)&data, sizeof(data) );
+			xbee_tx_packet( 100, (uint8_t*)&data, sizeof(data) ); // MAIN_IP
 
 			timer_delay_ms(DATA_SEND_T * 1000);
 		}
