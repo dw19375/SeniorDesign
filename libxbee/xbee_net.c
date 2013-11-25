@@ -174,6 +174,7 @@ uint8_t xbee_init( char* ip )
 				if( !(ret = cts) )
 				{
 					set_IP_address( ip );
+#if USE_GM == 1
 					if( !(ret = cts) )
 					{
 						set_mask();
@@ -182,6 +183,7 @@ uint8_t xbee_init( char* ip )
 							set_gateway();
 						}
 					}
+#endif /* USE_GM == 1 */
 				}
 #endif /* USE_DHCP = 1 */
 			}
@@ -235,21 +237,6 @@ void set_encryption_password()
 	while( cts == 1 );
 }
 
-void set_mask()
-{
-	uint8_t buf[] = MASK_STR;
-
-	buf[0] = 0x7E;
-	buf[1] = 0;
-	buf[2] = MASK_STR_LEN;
-	buf[3] = 0x08;
-
-	while( cts );
-	cts = 1;
-	send_data( buf );
-	while( cts == 1 );
-}
-
 // ip is a 3 character string containing lowest 3 digits of IP
 // address of node, e.g., ip = "128" for 192.168.1.128
 void set_IP_address( char* ip )
@@ -274,6 +261,22 @@ void set_IP_address( char* ip )
 	while( cts == 1 );
 }
 
+#if USE_GM == 1
+void set_mask()
+{
+	uint8_t buf[] = MASK_STR;
+
+	buf[0] = 0x7E;
+	buf[1] = 0;
+	buf[2] = MASK_STR_LEN;
+	buf[3] = 0x08;
+
+	while( cts );
+	cts = 1;
+	send_data( buf );
+	while( cts == 1 );
+}
+
 void set_gateway()
 {
 	uint8_t buf[] = GATEWAY_STR;
@@ -288,6 +291,7 @@ void set_gateway()
 	send_data( buf );
 	while( cts == 1 );
 }
+#endif /* USE_GM == 1 */
 
 // Prints frame to LCD, for debugging purposes
 //void print_frame( uint8_t* buf )

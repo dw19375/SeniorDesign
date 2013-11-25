@@ -18,7 +18,7 @@
 int main(int argc, char *argv[])
 {
 	int sockfd;
-  unsigned char buf[10];
+  unsigned char buf[12];
   int i, l;
 	struct addrinfo hints, *servinfo, *p;
 	int rv;
@@ -55,10 +55,15 @@ int main(int argc, char *argv[])
 	}
 	
 	l=0;
-	for( i=2; i<argc && i<10; i++ )
+	for( i=2; i<argc && i<14; i++ )
   {
     l++;
     buf[i-2] = atoi(argv[i]) & 0x00FF;
+  }
+  
+  for( i=0; i<l; i++ )
+  {
+    printf("%.2X ", buf[i]);
   }
 
 	if ((numbytes = sendto(sockfd, buf, l, 0,

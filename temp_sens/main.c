@@ -41,6 +41,7 @@ int main(void) {
 	_BIS_SR(GIE);
 
 	// Initialize XBee
+	xbee_init( MY_IP );
 	if( !xbee_init( MY_IP ) )
 	{
 		while( 1 )
@@ -53,7 +54,7 @@ int main(void) {
 			// Send temp data on wifi
 			data.temp = temp >> ( 3-PRECISION );
 
-			xbee_tx_packet( 100, (uint8_t*)&data, sizeof(data) ); // MAIN_IP
+			xbee_tx_packet( MAIN_IP, (uint8_t*)&data, sizeof(data) ); // MAIN_IP
 
 			timer_delay_ms(DATA_SEND_T * 1000);
 		}

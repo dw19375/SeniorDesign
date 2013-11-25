@@ -7,7 +7,7 @@
 #define MAX_PULSE_T     1500l		// Number of ms to run the servo when changing position
 #define VENT_CLOSED_T   2025		// Timer half period when vent is closed
 #define VENT_OPENED_T	1094		// Timer half period when vent is opened
-#define MY_IP			"129"
+#define MY_IP			"131"
 
 /*
  * Local functions
@@ -21,7 +21,7 @@ void set_servo( uint16_t pos );
  */
 uint32_t delay_time = 0;
 uint16_t pulse_count = 0;		// Count of pulses sent to servo
-uint16_t ack_to_send = 0;
+uint16_t ack_to_send = 0xFFFF;
 uint16_t servo_per = 0;
 
 /*
@@ -32,8 +32,8 @@ int main(void) {
     BCSCTL1 = CALBC1_8MHZ;
 	DCOCTL = CALDCO_8MHZ;
 	
-	P1DIR |= BIT6;
-	P2DIR |= BIT3;                            // P2.3 output for servo
+//	P1DIR |= BIT6;
+	P2DIR |= BIT3 + BIT2;                     // P2.3 output for servo
 	CCTL0 = CCIE;                             // CCR0 interrupt enabled
 	CCR0 = 1094;
 	TACTL = TASSEL_2 + MC_1 + ID_3;           // SMCLK, upmode, /8
@@ -44,23 +44,28 @@ int main(void) {
 	// Enable interrupts
 	_BIS_SR(GIE);
 
+	timer_delay_ms( 10000 );
+
 	// Initialize XBee
+	xbee_init( MY_IP );
 	if( !xbee_init( MY_IP ) )
 	{
 		// Set received packet handler
 		packet_rx_handler( vent_packet_rx_handler );
 
+//		P1OUT |= BIT6;
+
 		while( 1 )
 		{
 			// Check battery voltage
-			P1OUT ^= BIT6;
+			//P1OUT ^= BIT6;
 
 			if( ack_to_send )
 			{
 				// Send ACK
 				ack a = {ACK, 0};
 				a.seq = ack_to_send;
-				xbee_tx_packet( MAIN_IP, (uint8_t*)&a, sizeof(a) );
+				xbee_tx_packet( 100, (uint8_t*)&a, sizeof(a) );
 				ack_to_send = 0;
 			}
 
@@ -99,6 +104,7 @@ void vent_packet_rx_handler()
 			{
 				// Open vent
 				servo_per = VENT_OPENED_T;
+//				P1OUT &= ~BIT6;
 			}
 			else
 			{
@@ -136,14 +142,17 @@ void set_servo( uint16_t pos )
  */
 void timer_delay_ms( uint32_t t )
 {
-	TACTL &= ~MC_3;		// Halt Timer
-	CCR0 = 1000;
-	TACTL |= MC_1;		// Up mode
+	if( !pulse_count )
+	{
+		TACTL &= ~MC_3;		// Halt Timer
+		CCR0 = 1000;
+		TACTL |= MC_1;		// Up mode
 
-	delay_time = t;
-	CCTL0 |= CCIE;                             // CCR0 interrupt enabled
+		delay_time = t;
+		CCTL0 |= CCIE;                             // CCR0 interrupt enabled
 
-	_BIS_SR(LPM0_bits + GIE);                 // Enter LPM0 w/ interrupt
+		_BIS_SR(LPM0_bits + GIE);                 // Enter LPM0 w/ interrupt
+	}
 }
 
 /*
@@ -201,6 +210,7 @@ __interrupt void Timer_A (void)
 		if( !pulse_count )
 		{
 			P2OUT &= ~BIT3;
+//			P1OUT |= BIT6;
 		}
 	}
 	else

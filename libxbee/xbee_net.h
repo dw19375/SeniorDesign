@@ -11,15 +11,20 @@
 #include <stdint.h>
 #include "xbee_uart.h"
 
+#define USE_GM 0
+
 /*
  * Constant data
  */
-#define GATEWAY_STR "~0000GW192.168.1.0"
-#define GATEWAY_STR_LEN 15
 #define IP_ADDR_STR "~0000MY192.168.1.128"
 #define IP_ADDR_STR_LEN 17
+
+#if USE_GM == 1
+#define GATEWAY_STR "~0000GW192.168.1.0"
+#define GATEWAY_STR_LEN 15
 #define MASK_STR "~0000MK255.255.255.0"
 #define MASK_STR_LEN 17
+#endif /* USE_GM == 1 */
 
 #define USE_DHCP 1			// 0 for DHCP, 1 for Static IP
 

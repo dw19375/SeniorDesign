@@ -14,7 +14,7 @@
 /*
  * Global definitions
  */
-#define RX_BUF_LEN 24
+#define RX_BUF_LEN 26
 
 /*
  * Exported Functions
