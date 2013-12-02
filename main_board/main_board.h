@@ -24,6 +24,7 @@
 #define OFF 0
 #define AC 1
 #define HEAT 2
+#define FAN  3
 
 #define HEAT_PORT_OUT	P1OUT
 #define HEAT_PORT_DIR 	P1DIR

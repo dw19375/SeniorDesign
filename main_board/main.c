@@ -20,8 +20,9 @@
  * The index into temperature and humidity arrays is the room number
  */
 static int16_t temperature[NUM_ROOMS] = {88, 88};		// Initialize temperature to 22 deg. C
-static int16_t humidity[NUM_ROOMS] = {50, 50};			// Initialize humidity to 50%
+//static int16_t humidity[NUM_ROOMS] = {50, 50};			// Initialize humidity to 50%
 static int16_t desired_temp = 88;						// Desired temperature
+static uint8_t alive[NUM_ROOMS] = {0,0};				// High nibble = temp, low nibble = vent
 static uint8_t vent_state[NUM_ROOMS] = {0, 0};			// State of vents of each room 0 = closed, 1 = open
 static uint8_t priority_room = 0;
 static uint8_t system = 0;								// 0 for off, 1 for AC, 2 for heat (set by user)
@@ -39,11 +40,12 @@ static uint32_t delay_time;
 int main(void)
 {
 	uint8_t fan_counter = 0;		// Counts how many loops to time fan turning on.
+	uint8_t i;
 
     WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
 	BCSCTL1 = CALBC1_8MHZ;
 	DCOCTL = CALDCO_8MHZ;
-	P1DIR |= BIT6;
+//	P1DIR |= BIT6;
 
 	// Interface pins to HVAC
 	HEAT_PORT_DIR |= HEAT_PIN;
@@ -68,10 +70,14 @@ int main(void)
 	// Initialize LCD
 	lcdinit();
 
+	// Initialize packet handler
+	packet_rx_handler( main_board_packet_rx_handler );
+
 	// Enable interrupts
 	_BIS_SR(GIE);
 
 	// Initialize XBee
+	xbee_init( MY_IP );
 	if( !xbee_init( MY_IP ) )
 	{
 		while( 1 )
@@ -80,6 +86,8 @@ int main(void)
 			start_conversion();
 			timer_delay_ms( TEMP_READ_DELAY << PRECISION );
 			temperature[0] = get_temp() >> ( 3 - PRECISION );
+
+			alive[0] |= 0xF0;		// we're always alive
 
 			// Set the vents, as needed, and turn on the HVAC
 			if( set_active() )
@@ -120,9 +128,9 @@ int main(void)
 
 			display_data();
 
-			P1OUT ^= BIT6;
+//			P1OUT ^= BIT6;
 			timer_delay_ms(LOOP_DELAY * 1000);
-			P1OUT ^= BIT6;
+//			P1OUT ^= BIT6;
 
 			if( ack_to_send )
 			{
@@ -144,8 +152,17 @@ int main(void)
 				}
 				else
 				{
-					FAN_PORT_OUT &= ~FAN_PIN;
+//					FAN_PORT_OUT &= ~FAN_PIN;
 					fan_counter++;
+				}
+			}
+
+			for( i=0; i < NUM_ROOMS; i++ )
+			{
+				if( alive[i] & 0xF0 )
+				{
+					// Decrement upper nibble
+					alive[i] -= 0x10;
 				}
 			}
 		}
@@ -163,7 +180,7 @@ uint8_t set_active( )
 	uint8_t i, ret = 0;
 	int16_t thres = TEMP_THRESHOLD;
 
-	for( i=0; i<NUM_ROOMS; i++ )
+	for( i=0; i < NUM_ROOMS; i++ )
 	{
 		if( i == priority_room )
 		{
@@ -221,7 +238,7 @@ void set_vent( uint8_t room, uint8_t state )
 		vent_state[room] = state;
 
 		// Get address of vent in room
-		room = MAIN_IP + 1 + (room << 1);
+		uint8_t ip = MAIN_IP + 1 + (room << 1);
 
 		s++;
 
@@ -234,10 +251,17 @@ void set_vent( uint8_t room, uint8_t state )
 		v.seq = s;
 
 		// Send message to room and wait for ACK, retry up to 2 times
-		for(i=0; last_ack != s && i<3; i++)
+		for(i=3; last_ack != s && i!=0; i--)
 		{
-			xbee_tx_packet( room, (uint8_t*)(&v), sizeof(v) );
+			xbee_tx_packet( ip, (uint8_t*)(&v), sizeof(v) );
 			timer_delay_ms( TIMEOUT );
+		}
+
+		alive[room] &= 0xF0;
+		alive[room] |= 0x01;
+		if( last_ack != s )
+		{
+			alive[room] |= 0x02;
 		}
 	}
 }
@@ -247,9 +271,27 @@ void set_vent( uint8_t room, uint8_t state )
  */
 void display_data()
 {
+	uint8_t i;
+
 	gotoXy(0,0);
 
-	prints("Set:   ");
+	prints("Set: ");
+	switch( system )
+	{
+		case AC:
+			lcdData('C');
+			break;
+		case HEAT:
+			lcdData('H');
+			break;
+//		case FAN:
+//			lcdData('F');
+//			break;
+		default:
+			lcdData(' ');
+			break;
+	}
+	lcdData(' ');
 	integerToLcd( desired_temp >> 2 );
 	dec2ToLcd( desired_temp );
 
@@ -259,6 +301,13 @@ void display_data()
 	lcdData(' ');
 	integerToLcd( temperature[priority_room] >> 2 );
 	dec2ToLcd( temperature[priority_room] );
+
+	gotoXy(20,0);
+
+	for( i=0; i<NUM_ROOMS; i++ )
+	{
+		hex2Lcd( alive[i] );
+	}
 }
 
 /*
@@ -343,7 +392,9 @@ void parse_temp_packet( volatile uint8_t* p )
 	uint8_t rm = IP2room( p[7] );		// Source address is at offset 4, lowest byte at offset 7
 
 	temperature[rm] = q->temp;
-	humidity[rm] = q->humid;
+	alive[rm] |= 0xF0;					// Set upper bits to reset timeout counter
+
+//	humidity[rm] = q->humid;
 }
 
 /*

@@ -72,6 +72,8 @@ typedef struct ack_s
  * Function declarations
  */
 uint8_t xbee_init( char* ip );
+void sleep_init();
+void sleep_set();
 void packet_rx_handler( void (*new_handler)() );
 void xbee_tx_packet( uint8_t ip, uint8_t* buf, uint8_t len );
 

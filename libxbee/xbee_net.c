@@ -145,6 +145,28 @@ void xbee_tx_packet( uint8_t ip, uint8_t* buf, uint8_t len )
 
 }
 
+// Initialize sleep parameters
+void sleep_init()
+{
+	uint8_t buf[] = {0x7E, 0x00, 0x06, 0x08, 0, 'S', 'O', 0x1, 0x40, 0};
+
+	while(cts);
+	cts = 1;
+	send_data(buf);
+	while( cts == 1 );			// Stay here until frame received by XBee
+}
+
+// Set XBee to sleep
+void sleep_set()
+{
+	uint8_t buf[] = {0x7E, 0x00, 0x05, 0x08, 0, 'S', 'M', 4, 0};
+
+	while(cts);
+	cts = 1;
+	send_data(buf);
+	while( cts == 1 );			// Stay here until frame received by XBee
+}
+
 /*
  * Initializes UART and XBee network parameters
  * Returns 0 on success, non-zero on failure
