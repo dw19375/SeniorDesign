@@ -10,11 +10,11 @@
 #define OW_PIN			BIT4
 
 #define V_THRESHOLD		550
-#define BATTERY_CHECK_T 1			// Battery voltage checked at least this often (in seconds).
+#define BATTERY_CHECK_T 4			// Battery voltage checked at least this often (in seconds).
 #define MAX_PULSE_T     1500l		// Number of ms to run the servo when changing position
 #define VENT_CLOSED_T   2025		// Timer half period when vent is closed
 #define VENT_OPENED_T	1094		// Timer half period when vent is opened
-#define MY_IP			"131"
+#define MY_IP			"129"
 
 /*
  * Local functions

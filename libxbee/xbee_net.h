@@ -38,7 +38,7 @@
 /*
  * Type definitions
  */
-typedef struct user_cmd_s		// Jeff, please correct this
+typedef struct user_cmd_s
 {
 	uint16_t	type;
 	uint16_t	seq;		// Sequence number

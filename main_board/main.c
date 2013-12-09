@@ -52,6 +52,8 @@ int main(void)
 	AC_PORT_DIR |= AC_PIN;
 	FAN_PORT_DIR |= FAN_PIN;
 
+	P2SEL = 0;
+
 	HEAT_PORT_OUT &= ~HEAT_PIN;
 	AC_PORT_OUT &= ~AC_PIN;
 	FAN_PORT_OUT &= ~FAN_PIN;
@@ -197,7 +199,7 @@ uint8_t set_active( )
 				set_vent( i, 1 );
 				ret |= 1;
 			}
-			else if( temperature[i] < desired_temp - TEMP_THRESHOLD )
+			else if( temperature[i] < desired_temp - PR_TEMP_THRESHOLD )
 			{
 				// Cold enough, close vent
 				set_vent( i, 0 );
@@ -212,7 +214,7 @@ uint8_t set_active( )
 				set_vent( i, 1 );
 				ret |= 1;
 			}
-			else if( temperature[i] > (desired_temp + TEMP_THRESHOLD) )
+			else if( temperature[i] > (desired_temp + PR_TEMP_THRESHOLD) )
 			{
 				// Warm enough, close vent
 				set_vent( i, 0 );

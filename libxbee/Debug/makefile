@@ -110,7 +110,7 @@ endif
 all: libxbee.lib
 
 dependents:
-	-cd /home/dan/College/3ece445/liblcd/Debug && $(MAKE) clean all
+	-cd /home/dan/College/3ece445/liblcd/Debug && $(MAKE) all
 
 # Tool invocations
 libxbee.lib: $(OBJS) $(OBJ_SRCS) $(LIB_SRCS) /home/dan/College/3ece445/liblcd/Debug/liblcd.lib
