@@ -37,38 +37,164 @@ multiple remote temperature sensors and vent controllers, as shown in Fig.~\ref{
 The overall system will consist of one main control panel, a central HVAC system, and any number of remote temperature sensors and duct vent controllers.  At least one remote temperature sensor is required for the system to be ``smart'', such that it will be able to detect temperatures in rooms other than where the normal thermostat (main control panel) is located.  The duct vent controllers also follow a similar logic, as many duct controllers would be used as desired to control air flow to desired rooms, but at least two are required to make the system work as intended.
 %There are several components used in many of the components: temperature and humidity sensors, microcontrollers, and wireless transceivers.
 \paragraph{Temperature Sensors}
+\label{Temp Sensors}
 An LM35 temperature sensor is used to get an accurate reading of temperature in all components. The sensors will be read by the microcontrollers and used along with humidity sensors to determine HVAC on/off state and vents open/closed state.
 \paragraph{Humidity Sensors}
+\label{humid_sensors}
 An HH10D humidity sensor will be used to measure the relative humidity around the sensor.  The humidity reading will be used along with the temperature reading to set the temperatures in each room.
+
 \paragraph{Central HVAC}
 No modifications to a home's central HVAC system is desired.  In the United States, most central HVAC systems supply a $24\, \rm VAC_{RMS}$ power for a thermostat, and receive turn on and off signals from the thermostat.  The main control panel must provide these signals to the HVAC system.
+
+%Begin Main Panel Design Section
 \subsubsection{Main Control Panel}
-The main control panel acts as master to all other components.  The main control panel can be broken down into several components as shown in Fig.~\ref{fig:cntldiagram}. The housing for this main panel should be a plastic case similar to standard thermostats.
+The main control panel acts as master to all other components. The main control panel can be broken down into several components as shown in Fig.~\ref{fig:cntldiagram}. The housing for this main panel is a plastic case similar to standard thermostats. A closer look at the schematic in Fig.~\ref{fig:maincntl_schematic} gives a closer look at the main control panel.
+\begin{figure}
+\centering
+\includegraphics[width=.99\textwidth]{maincntl_schematic.png}
+\caption{Main control panel schematic.}
+\label{fig:maincntl_schematic}
+\end{figure}
+\paragraph{Home HVAC System}
+Most standard home HVAC systems use a 5 wire system to turn on and off the heating and cooling system. In the main control schematic, Fig.~\ref{fig:maincntl_schematic}, the HVAC block shows the output pins from the HVAC system. The HVAC system supplies a 24VAC on the Red wire, neutral on the Blue wire, and 3 other wires which operate the home's systems. Each of the other three wires are relays that switch on and off the HVAC system. For example, in order to switch on the Heating system, the 24VAC will be switched with a MOSFET to the W (white) line. To turn off the system, the MOSFET must switch off. The HVAC system's 24VAC will also power the main control panel.
 \paragraph{Main Panel Power Supply}
-The power supply must convert the US standard $24\,\rm VAC_{RMS}$ low voltage wiring for most HVAC thermostat controllers into $3.3\,\rm VDC$, as used by the microcontroller and transceiver. The Power supply will be a full-wave rectifier and a switched mode DC-DC converter.
+The Main Control Panel is to be powered by the 24VAC low-voltage supply from a home's HVAC system. The 24VAC supply must be converted to the 3.3V required by the MSP430, XBee Wireless Transceiver, Sensors, and Hitachi LCD Display. To make this conversion, a rectifier and DC-DC converter will be used. The full-wave rectifier is desirable for making the conversion to DC; it requires smaller output capacitors to control output voltage ripple. A synchronous, wide input range DC-DC converter from Linear Technology (LTC3854) was chosen to complete the DC-DC conversion. The output voltage selector circuit determines the output voltage: $V_{out}=.8(1-\frac{R_1}{R_2})$. Using Linear Technology parts allows easy simulation using LTSpice. The circuit was simulated using Fig.~\ref{fig:MPPS_test} as source and load simulations. Results are shown in Fig.~\ref{fig:powersupply_simwave}.
+\begin{figure}
+\centering
+\includegraphics[width=.99\textwidth]{MPPS_schem_nosim.png}
+\caption{Complete power supply design utilizing the LTC3854 DC-DC converter.}
+\label{fig:MPPS_schem_nosim}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=.8\textwidth]{MPPS_test.png}
+\caption{Test fixtures for simulation of the power supply.}
+\label{fig:MPPS_test}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=.99\textwidth]{Powersupply_simwave.png}
+\caption{Simulation of the input and output wave forms under various loading of $(I_{out})$.}
+\label{fig:powersupply_simwave}
+\end{figure}
+\paragraph{Main Panel Microcontroller}
+\begin{figure}
+\centering
+\includegraphics[height=.9\textheight]{maincntl_flow.pdf}
+\caption{Flow chart depicting MSP430 programmed control logic.}
+\label{fig:maincntl_flow}
+\end{figure}
+
 \paragraph{Main Panel Microcontroller}
 The microcontroller used will be an MSP430 microcontroller. The microcontroller must send and receive packets over the network via the wireless transceiver, read the temperature and humidity sensors, signal the central HVAC system on or off, and output to an LCD display for debugging and UI purposes. The main control panel will receive broadcast data from all of the remote temperature sensors on the network (including its own sensors). Once the microcontroller receives temperature information from each remote sensor, it determines which vents to open and close and sends data wirelessly to the desired vent controllers. The HVAC is controlled over a 2-3 wire system connected directly to the HVAC over existing house wiring.
+% Table generated by Excel2LaTeX from sheet 'Sheet1'
+\begin{table}[htbp]
+\centering
+\caption{MSP430G2333 Designed Pin Assignments.}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{\#} & \textbf{MSP430 Pin} & \textbf{Function} \bigstrut\\
+\hline
+\hline
+1 & DVcc & 3.3V power input \bigstrut\\
+\hline
+2 & P1.0 & LCD Register Select \bigstrut\\
+\hline
+3 & UCA0SOMI & Xbee SPI\_MISO \bigstrut\\
+\hline
+4 & UCA0SIMO & Xbee SPI\_MOSI \bigstrut\\
+\hline
+5 & P1.3 & HVAC Heat ON switch \bigstrut\\
+\hline
+6 & UCA0CLK & Xbee SPI\_Clk \bigstrut\\
+\hline
+7 & P1.5 & LCD Enable \bigstrut\\
+\hline
+8 & TA1.0 & Temp Sensor Fout \bigstrut\\
+\hline
+9 & P2.1 & LCD Bit 0 \bigstrut\\
+\hline
+10 & P2.2 & LCD Bit 1 \bigstrut\\
+\hline
+11 & DVss & Gnd \bigstrut\\
+\hline
+12 & P2.6 & HVAC Cool ON switch \bigstrut\\
+\hline
+13 & P2.7 & HVAC Fan ON switch \bigstrut\\
+\hline
+14 & TEST & N/C \bigstrut\\
+\hline
+15 & RST & 3.3V tied high \bigstrut\\
+\hline
+16 & UCB0SCL & Temp Sensor SCL \bigstrut\\
+\hline
+17 & UCB0SDA & Temp Sensor SDA \bigstrut\\
+\hline
+18 & P2.5 & LCD Bit 2 \bigstrut\\
+\hline
+19 & P2.4 & Humidity Sensor DQ \bigstrut\\
+\hline
+20 & P2.3 & LCD Bit 3 \bigstrut\\
+\hline
+\end{tabular}%
+\label{tab:msp_inout}%
+\end{table}%
+
 \paragraph{XBee Wi-Fi Transceiver}
-The Xbee transciever block is the main communication portion of the design.  The transceivers will all be on a wireless network to allow each component to send/receive messages from the main control panel.  Power for the transceiver is 3.3\,VDC and comes from the power supply. The transciever connects to the microcontroller via serial port.
+The Xbee transciever block is the main communication portion of the design. The transceivers will all be on a wireless network to allow each component to send/receive messages from the main control panel. Power for the transceiver is $3.3\vdc$ and comes from the power supply. The transceiver connects to the microcontroller via serial port.
+
+\paragraph{Main Panel Temperature and Humidity Sensors}
+See \S\ref{temp_sensors} and \S\ref{humid_sensors}.
+
+\paragraph{Main Panel User Interface}
+Interfacing with the main control panel will be done in two parts. An HD44780 Hitachi LCD display will be used to display current system settings and temperature at the main panel. To program the thermostat, a user interface application on a networked PC will be the main interface with the system. Users can change room priorities, temperature preferences, and weekly schedules via the interface. The PC application will follow the flow chart in Fig.~\ref{fig:PCapp_flow}.
+The HD44780 display is connected to the MSP430 via 6 pins: RS, EN, Bits0-3. R/W is tied low for always writing, and Vcc, Gnd and LCD power pins are connected as required. The connections can be seen in Fig.~\ref{fig:maincntl_schematic}
+\begin{figure}
+\centering
+\includegraphics[width=.4\textwidth]{PCapp_flow.pdf}
+\caption{Flow chart depicting the PC application logic flow.}
+\label{fig:PCapp_flow}
+\end{figure}
+%end main control panel design
+
+
+
+%Begin Remote Temperature Sensor Design
+\begin{figure} [htb]
+\centering
+\includegraphics[width=.99\textwidth]{Temperature_Sensor.JPG}
+\caption{Temperature Control System schematic.}
+\label{fig:Temperature_System}
+\end{figure}
 
 
 \subsubsection{Remote Temperature Sensors}
-A remote temperature sensor consists of a power supply, microcontroller, sensors, and wireless tranceiver as shown in Fig.~\ref{fig:remotediagram}.  Each remote temperature sensor will be identical, and will be housed in a small plastic case and plugged into an AC outlet.
+A remote temperature sensor consists of a power supply, microcontroller, sensors, and wireless transceiver as shown in Fig.~\ref{fig:remotediagram}.  Each remote temperature sensor will be identical, and will be housed in a small plastic case and plugged into an AC outlet.
 \paragraph{Remote Temperature Sensor Power Supply}
-The power source for this component is a standard AC outlet.  Like the main controller, an AC-DC converter is required to convert the 120\,VAC\,(RMS) into the 3.3\,VDC required by the microcontroller and wireless transceiver.  The conversion will be done using a standard ``wall wart'' style power supply.
+The power source for this component is a standard AC outlet.  Like the main controller, an AC-DC converter is required to convert the 120\,VAC\,(RMS) into the 3.3\,VDC required by the microcontroller and wireless transceiver.  The conversion will be done using a standard ``USB style'' power supply.
 \paragraph{Remote Temperature Sensor Microcontroller}
-Again, the microcontroller for this component is an MSP430. The goal of this microcontroller is to read the sensors and output a message to the main control panel through the wireless device.
+The MCU is a TI MSP430G2333.  It will read the temperature and humidity sensors and periodically send the data to the main controller via a Wifi network connection.  The MCU is responsible for initializing the XBee with the appropriate network configuration parameters, and reading the proper calibration parameters from the humidity sensor via the I$^2$C bus.
 \paragraph{Remote Temperature Sensor XBee Transceiver}
-The Xbee transceiver is used in the remote sensor to allow communication to the main control panel. It will be connected to the microcontroller via serial port.
+The Xbee transceiver is used in the remote sensor to allow communication to the main control panel. It will be interfaced to the microcontroller via SPI port.  The Xbee will connect to a pre-determined network.
+%End Design
+
+%Begin Vent Controller Design
+\begin{figure} [htb]
+\centering
+\includegraphics[width=.99\textwidth]{Vent_System.JPG}
+\caption{Vent Control System schematic.}
+\label{fig:Vent_System}
+\end{figure}
 
 \subsubsection{Vent Controllers}
 The vent controller, shown in Fig.~\ref{fig:ventdiagram}, will mount inside of a standard HVAC ventilation cover and control the opening and closing of the vent.  Opening and closing of the vent will allow the system control over HVAC flow out of the desired vent, and by extension, the room. The vent controller will receive messages from the main control panel and open or close the vent using an actuator connected to the vent's existing closer. Each vent controller will be identical and can be replicated as desired.
 \paragraph{Vent Controller Battery}
-Since many homes have vents which are not near AC outlets, and it is not desirable to add a great deal of house wiring, the vent controllers will be battery powered.  9V batteries will be used to supply power to the microcontroller, transceiver, and actuator motor.
+Since many homes have vents which are not near AC outlets, and it is not desirable to add a great deal of house wiring, the vent controllers will be battery powered.  4 AA batteries will be used to supply power to the microcontroller, transceiver, and actuator motor.
+\paragraph{Battery Monitor}
 \paragraph{Vent Controller Microcontroller}
-The MSP430 is used to receive messages from the main control panel via the wireless transceiver.  Once a message is received, the controller will command a small DC actuator to open/close the vent.
+The MSP430 is used to receive messages from the main control panel via the wireless transceiver.  The MCU is responsible for initializing the XBee with the correct network configuration parameters.  Once the appropriate packet is received, the controller will command a DC actuator to open/close the vent.
 \paragraph{Vent Controller XBee Transceiver}
-The wireless transceiver in the vent controller will receive only. It will receive messages via the wireless network and forward the message over a serial connection.
+The wireless transceiver in the vent controller will receive only. It will receive messages via the wireless network and forward the message via an SPI connection.
 \paragraph{Vent Controller Actuator}
-The actuator will be a small DC servo motor controlled by the microcontroller.  It will be powered by the 9\,V batteries.  It will operate in two directions and turn a shaft to two positions: $0^\circ$ and $90^\circ$. $0^\circ$ will be the ``Vent OFF'' position and $90^\circ$ will be the ``Vent ON'' position.
-
+We will be using the HS-311 Servo motor controlled by a MSP430 microcontroller and will be powered by 4 AA batteries to ensure a 6V output. The motors position will be controlled by a square wave sent from the MCU. The neutral position pulse duration is 1.5\,ms, which corresponds to 90$^{\circ}$ and any pulse width below that drives the servo toward 0$^{\circ}$, while a pulse longer than 1.5\,ms drives it toward 180$^{\circ}$. The ``Vent off'' position will be at 180$^{\circ}$ and ``Vent on'' position will be at 90$^{\circ}$.
+%end design
