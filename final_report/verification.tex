@@ -1,2 +1,22 @@
 \section{Verification Procedures}
 \emph{Please see Appendix~\ref{reqtab} for a complete listing of the design requirements.}
+\subsection{Remote Temperature Sensor Unit}
+\subsubsection{Power Supply}
+The output voltage of the voltage regulator was measured to be 3.3\volts\ when no components were drawing power ($I=0\amps$) and under normal operating conditions, with $I\approx200\mamps$.  Since the load current never exceeded 200\mamps, a test of the ouptput voltage was deemed superfluous.
+
+\subsubsection{Sensor Data Collection}
+\paragraph{Temperature Sensor}
+The temperature was read from the temperature sensor and the temperature was reported via the LCD while debugging.  Since a common library was used to interface with the DS18B20 in all components, this only needed to be verified once.
+
+\paragraph{Humidity Sensor}
+The humidity sensor was not used in the final design.
+
+\subsubsection{Sensor Accuracy}
+\paragraph{Temperature Sensor}
+% Fill in the thermometer specs
+The room temperature was measured with a Fluke $xxx$ thermometer, with an accuracy of $xxx$, and was compared to the reading of the temperature sensor.  The DS18B20 consistently read approximately $0.5^\circ$C higher than the Fluke thermometer.  This was likely due to ambient heat from the temperature sensor unit.  This was not an issue on the main board, as the DS18B20 was better isolated from the electronics.
+
+\paragraph{Humidity Sensor}
+The humidity sensor was not used in the final design.
+
+
