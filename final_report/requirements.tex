@@ -1,0 +1,199 @@
+% This is the requirements and verifications table, included in the appendix 
+\newlength{\mytabwidth}
+\setlength{\mytabwidth}{0.5\textwidth}
+\addtolength{\mytabwidth}{-2\tabcolsep}
+\addtolength{\mytabwidth}{-3\arrayrulewidth}
+
+%\section{Requirements and Verifications}
+\subsection{Remote Temperature Sensor Unit}
+\subsubsection{Power Supply}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input of 5\,V and an output of 500\,mA. & Measure the output voltage with a load current of 500\mamps\ ($6.6\ohms$ at 3.3\volts) and ensure it meets specifications.\\
+\hline
+\end{tabular}
+
+\subsubsection{Sensor Data Collection}
+\label{sensor_data}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The MCU will read the ambient temperature data from an external sensor via a 1-wire protocol.  &
+Ensure that the MCU communicates with the temperature sensor and a valid temperature value is read. \\
+\hline
+The MCU will convert the raw temperature data, as needed, to quarters of degrees Celsius (e.g., $T\times4$). &
+Ensure the proper conversion of the raw data is taking place. \\
+\hline
+The MCU will read the calibration values for the humidity sensor via the I$^2$C bus, if needed. &
+Ensure that the MCU communicates with the humidity sensor and that valid calibration values are read. \\
+\hline
+The MCU will read the ambient relative humidity from the humidity sensor. &
+Ensure the MCU reads the output of the humidity sensor and that a valid relative humidity is read. \\
+\hline
+\end{tabular}
+
+\subsubsection{Sensor Accuracy}
+\label{sensor_acc}
+{\em The exact accuracy requirements of the sensors, and hence the verification procedures, are not critical to the system's performance, and are meant only as general guidelines. }
+
+\noindent
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The temperature sensor should output the ambient temperature with an error of no more than $\pm0.5^\circ\,$C over a range of 10--32$^\circ$\,C. &
+Compare the measurement of the ambient temperature of a thermometer with a known error to that of the temperature sensor, and ensure the reading of the temperature sensor meets specifications. \\
+\hline
+The humidity sensor should output the ambient relative humidity with an error of no more than $\pm 5$\% RH. over a range of 10\%--90\%\ RH. &
+Compare the measurement of the ambient RH of an hygrometer with a known error to that of the humidity sensor, and ensure the reading of the humidity sensor meets specifications. \\
+\hline
+\end{tabular}
+
+\subsubsection{Network}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The MCU will initialize the wireless transceiver with a pre-programmed SSID, password, and static IP address. &
+Ensure that the wireless transceiver is able to associate with the router. \\
+\hline
+The MCU will periodically transmit a packet to the central control unit containing the most recent temperature and humidity data along with a unique identification. &
+Ensure that a packet containing the necessary data is sent to the central control unit. \\
+\hline
+\end{tabular}
+
+\subsection{Vent Control Unit}
+\subsubsection{Power Supply}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input of 5\,V and an output of 500\,mA. & Measure the output voltage with a load current of 500\mamps\ ($6.6\ohms$ at 3.3\volts) and ensure it meets specifications.\\
+\hline
+\end{tabular}
+
+\subsubsection{Servo Control}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The MCU shall cause the servo motor to open the vent upon receipt of the appropriate packet. &
+Send the appropriate packet to the vent controller and the vent should open. \\
+\hline
+The MCU shall cause the servo motor to close the vent upon receipt of the appropriate packet. &
+Send the appropriate packet to the vent controller and the vent should close. \\
+\hline
+\end{tabular}
+
+\subsubsection{Network}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The MCU will initialize the wireless transceiver with a pre-programmed SSID, password, and static IP address. &
+Ensure that the wireless transceiver is able to associate with the router. \\
+\hline
+The MCU will listen for packets on the wireless network and take appropriate action when a command packet is received. &
+Send a command packet to the vent controller and the vent should take the appropriate action. \\
+\hline
+The MCU will acknowledge command packets by sending an ACK packet to the central control unit. &
+When a command packet is received at the vent controller, ensure an ACK is sent back to the central control unit. \\
+\hline
+\end{tabular}
+
+\subsection{Main Control Unit}
+\subsubsection{Power Supply}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input of 5\,V and an output of 500\,mA. & Measure the output voltage with a load current of 500\mamps\ ($6.6\ohms$ at 3.3\volts) and ensure it meets specifications.\\
+\hline
+\end{tabular}
+
+\subsubsection{Local Sensor Data Collection}
+{\em See \S \ref{sensor_data}---the same requirements and verification procedures are used here.}
+\subsubsection{Local Sensor Accuracy}
+{\em See \S \ref{sensor_acc}---the same requirements and verification procedures are used here.}
+
+\subsubsection{Network}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The MCU will initialize the wireless transceiver with a pre-programmed SSID, password, and static IP address. &
+Ensure that the wireless transceiver is able to associate with the router. \\
+\hline
+The MCU will listen for packets from the remote sensor units and update the values for temperature and humidity. &
+When a packet from a remote sensor is received, the data corresponding to that sensor should be updated with the new values. \\
+\hline
+After the MCU sends a command packet to a vent controller, if an ACK is not received within a specified amount of time, the packet will be resent up to three times. &
+Send a command packet to a PC and listen for the initial packet and three resent packets. \\
+\hline
+When the MCU receives a command packet from the user, an acknowledgment will be sent to the sender of the packet. &
+Send a command packet to the central control unit and listen for an ACK packet. \\
+\hline
+\end{tabular}
+
+\subsubsection{User Interface}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+The MCU will listen for packets from the network from the user.  These packets must contain the sender's IP address, the desired temperature, whether heating or air conditioning is used, and the desired priority room.  These packets must be acknowledged. &
+Send a packet to the central control unit.  Ensure that the correct data is set internally and that an ACK is sent. \\
+\hline
+The LCD will display the desired temperature, the current temperature of the priority room, and the priority room number. &
+Ensure that the correct data is displayed on the LCD. \\
+\hline
+\end{tabular}
+
+\subsubsection{HVAC Control Logic}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+% For each sensor unit, the apparent temperature will be calculated and used for HVAC controls, and filtered to reduce the effect of variations. &
+% Ensure that HVAC control is based on the apparent temperature. \\
+% \hline
+If heat is selected by the user and the temperature at a sensor unit is above the threshold for the priority room, the corresponding vent will be closed. &
+Ensure that the vent is closed if the temperature is above the threshold for the priority room. \\
+\hline
+If A/C is selected by the user and the temperature at a sensor unit is below the threshold for the priority room, the corresponding vent will be closed. &
+Ensure the vent is closed if the temperature is below the threshold for the priority room. \\
+\hline
+If heat is selected by the user and the temperature at a sensor unit is below the threshold for that room, the corresponding vent will be opened. &
+Ensure the vent is opened if the temperature is below the threshold for the room. \\
+\hline
+If A/C is selected by the user and the temperature at a sensor unit is above the threshold for that room, the corresponding vent will be opened. &
+Ensure the vent is opened if the temperature is above the threshold for the room. \\
+\hline
+If heat is selected by the user and the temperature in any room is below the threshold for that room, the central control unit will turn the heating on. &
+Ensure the heating is on when the temperature in any room is below the threshold for that room. \\
+\hline
+If heat is selected by the user and the temperature in every room is at or above the threshold for the priority room, the heating will be turned off. &
+Ensure the heating is off when the temperature in all rooms is above the threshold for the priority room. \\
+\hline
+If A/C is selected by the user and the temperature in any room is above the threshold for that room, the central control unit will turn the A/C on. &
+Ensure the A/C is on when the temperature in any room is above the threshold for that room. \\
+\hline
+If the A/C is selected by the user and the temperature in every room is at or below the threshold for the priority room, the A/C will be turned off. &
+Ensure the A/C is off when the temperature in all rooms is below the threshold for the priority room. \\
+\hline
+\end{tabular}
+
+\subsubsection{HVAC Interface}
+\begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
+\hline
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\hline\hline
+To activate the heating, the central control unit will output 24\,VAC to the HVAC system to activate the heating, and after a determined time, send 24\,VAC to activate the fan. &
+Ensure that the heating is activated when appropriate. \\
+\hline
+To activate the A/C, the central control unit will output 24\,VAC to the HVAC system to activate the A/C, and after a determined time, send 24\,VAC to activate the fan. &
+Ensure that the A/C is activated when appropriate. \\
+\hline
+\end{tabular}
