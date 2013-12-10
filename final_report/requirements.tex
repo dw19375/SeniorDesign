@@ -9,7 +9,7 @@
 \subsubsection{Power Supply}
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} & \multicolumn{1}{|c|}{Passed}\\
 \hline\hline
 The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input of 5\,V and an output of 500\,mA. & Measure the output voltage with a load current of 500\mamps\ ($6.6\ohms$ at 3.3\volts) and ensure it meets specifications.\\
 \hline
@@ -19,7 +19,7 @@ The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input o
 \label{sensor_data}
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} & \multicolumn{1}{|c|}{Passed}\\
 \hline\hline
 The MCU will read the ambient temperature data from an external sensor via a 1-wire protocol.  &
 Ensure that the MCU communicates with the temperature sensor and a valid temperature value is read. \\
@@ -42,7 +42,7 @@ Ensure the MCU reads the output of the humidity sensor and that a valid relative
 \noindent
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} & \multicolumn{1}{|c|}{Passed}\\
 \hline\hline
 The temperature sensor should output the ambient temperature with an error of no more than $\pm0.5^\circ\,$C over a range of 10--32$^\circ$\,C. &
 Compare the measurement of the ambient temperature of a thermometer with a known error to that of the temperature sensor, and ensure the reading of the temperature sensor meets specifications. \\
@@ -55,7 +55,7 @@ Compare the measurement of the ambient RH of an hygrometer with a known error to
 \subsubsection{Network}
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} & \multicolumn{1}{|c|}{Passed}\\
 \hline\hline
 The MCU will initialize the wireless transceiver with a pre-programmed SSID, password, and static IP address. &
 Ensure that the wireless transceiver is able to associate with the router. \\
@@ -69,7 +69,7 @@ Ensure that a packet containing the necessary data is sent to the central contro
 \subsubsection{Power Supply}
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} & \multicolumn{1}{|c|}{Passed}\\
 \hline\hline
 The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input of 5\,V and an output of 500\,mA. & Measure the output voltage with a load current of 500\mamps\ ($6.6\ohms$ at 3.3\volts) and ensure it meets specifications.\\
 \hline
@@ -78,7 +78,7 @@ The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input o
 \subsubsection{Servo Control}
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} & \multicolumn{1}{|c|}{Passed}\\
 \hline\hline
 The MCU shall cause the servo motor to open the vent upon receipt of the appropriate packet. &
 Send the appropriate packet to the vent controller and the vent should open. \\
@@ -91,7 +91,7 @@ Send the appropriate packet to the vent controller and the vent should close. \\
 \subsubsection{Network}
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} & \multicolumn{1}{|c|}{Passed}\\
 \hline\hline
 The MCU will initialize the wireless transceiver with a pre-programmed SSID, password, and static IP address. &
 Ensure that the wireless transceiver is able to associate with the router. \\
@@ -108,7 +108,7 @@ When a command packet is received at the vent controller, ensure an ACK is sent 
 \subsubsection{Power Supply}
 \begin{tabular}{|p{\mytabwidth}|p{\mytabwidth}|}
 \hline
-\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} \\
+\multicolumn{1}{|c|}{Requirement} & \multicolumn{1}{|c|}{Verification} & \multicolumn{1}{|c|}{Passed}\\
 \hline\hline
 The output of the voltage regulator must be $3.3\vdc \pm 0.1\vdc$ for an input of 5\,V and an output of 500\,mA. & Measure the output voltage with a load current of 500\mamps\ ($6.6\ohms$ at 3.3\volts) and ensure it meets specifications.\\
 \hline
