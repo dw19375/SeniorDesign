@@ -44,72 +44,39 @@ An LM35 temperature sensor is used to get an accurate reading of temperature in 
 An HH10D humidity sensor will be used to measure the relative humidity around the sensor.  The humidity reading will be used along with the temperature reading to set the temperatures in each room.
 
 \paragraph{Central HVAC}
-No modifications to a home's central HVAC system was desired. In the United States, most central HVAC systems use a 5-wire system as seen in Fig.~\ref{fig:5wire}.  The 5 wire system consists of a $24VAC$ red supply wire with blue/cyan neutral.  The white, yellow, and green wires correspond to relays which are turned on by 24VAC supplied to them. It is the job of the thermostat to switch the 24VAC power to each of the desired system relays.  Light bulbs were connected to the main panel's green,white, and yellow wires to verify that the main panel would properly turn on and off the HVAC system.  The main panel was also designed to utilize this 24VAC source.
-
-\begin{figure}
-\centering
-\includegraphics[width=.99\textwidth]{5wire.png}
-\caption{Basic schematic for a 5-wire HVAC system found in many homes.}
-\label{fig:5wire}
-\end{figure}
+No modifications to a home's central HVAC system is desired.  In the United States, most central HVAC systems supply a $24\, \rm VAC_{RMS}$ power for a thermostat, and receive turn on and off signals from the thermostat.  The main control panel must provide these signals to the HVAC system.
 
 %Begin Main Panel Design Section
 \subsubsection{Main Control Panel}
-The main control panel acts as master to all other components. The main control panel can be broken down into several components as shown in Fig.~\ref{fig:cntldiagram}. Fig.~\ref{fig:main_cntl_schematic} gives a closer look at the main control panel.  The main control panel was broken into smaller parts for verification reasons: HVAC system, Power Supply, Microcontroller, and XBee Wi-Fi.
-
-The main control panel was housed in a prototype box from RadioShack.  The enclosure hid much of the wires, protecting the user from the open wires, and was more aesthetically pleasing. Fig.~\ref{fig:main_panel_box} shows the completed main control panel during operation.  Fig.~\ref{fig:main_panel_apart} shows the main control panel removed from its case.  The LCD is connected to the main board via ribbon cable.  A separate relay control board was added and will be discussed next.
+The main control panel acts as master to all other components. The main control panel can be broken down into several components as shown in Fig.~\ref{fig:cntldiagram}. The housing for this main panel is a plastic case similar to standard thermostats. A closer look at the schematic in Fig.~\ref{fig:maincntl_schematic} gives a closer look at the main control panel.
 \begin{figure}
 \centering
-\includegraphics[width=.99\textwidth]{main_cntl_schematic.png}
+\includegraphics[width=.99\textwidth]{maincntl_schematic.png}
 \caption{Main control panel schematic.}
-\label{fig:main_cntl_schematic}
+\label{fig:maincntl_schematic}
 \end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=.99\textwidth]{main_panel_box.png}
-\caption{Main control panel inside its enclosure, operating.}
-\label{fig:main_panel_box}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=.99\textwidth]{main_panel_apart.png}
-\caption{Disassembled main control panel, showing main board, relay board, and LCD.}
-\label{fig:main_panel_apart}
-\end{figure}
-
-The relay board was added in place of the MOSFETs originally indicated to switch on and off the HVAC system.  The MOSFETs alone turned out to not be suitable due to the source reference requirements.  An isolated design was required and designed using relays.  To overcome the high switching voltage required by the previous MOSFETs, BJTs were used to switch on and off the relays on command from the MSP430.  Fig.~\ref{fig:Relay_schem} shows the schematic used to command the HVAC system in the final design.
-
-\begin{figure}
-\centering
-\includegraphics[width=.99\textwidth]{Relay_schem.png}
-\caption{Relaying scheme used to have the MSP430 control the HVAC. Each of the 3 HVAC control wires have a duplicate of this schematic.}
-
+\paragraph{Home HVAC System}
+Most standard home HVAC systems use a 5 wire system to turn on and off the heating and cooling system. In the main control schematic, Fig.~\ref{fig:maincntl_schematic}, the HVAC block shows the output pins from the HVAC system. The HVAC system supplies a 24VAC on the Red wire, neutral on the Blue wire, and 3 other wires which operate the home's systems. Each of the other three wires are relays that switch on and off the HVAC system. For example, in order to switch on the Heating system, the 24VAC will be switched with a MOSFET to the W (white) line. To turn off the system, the MOSFET must switch off. The HVAC system's 24VAC will also power the main control panel.
 \paragraph{Main Panel Power Supply}
-The Main Control Panel is to be powered by the 24VAC low-voltage supply from a home's HVAC system. The 24VAC was rectified using a NTE167 bridge rectifier in KBPM package.  Filtering capacitors provided a more constant input, Fig.~\ref{fig:main_rectified}, to an integrated power supply from TI, the LM2825-5.0.  The LM2825-5.0 is a buck converter integrated into a $.6"$ DIP24 package, and provides a constant 5V output with very little loss at up to 1A.  This 5V was appropriate for powering the UC204 LCD (Hitachi HD44780 protocol; see the User Interface section) and an LT1129-3.3 LDO regulator, from Linear Technology, capable of supplying the $3.3VDC$ necessary for the XBee and UC-204A LCD (Hitachi HD44780; User Interface section). Figures~\ref{fig:main_5v_output} and~\ref{fig:main_3_3v_output} display the verified operation of the power supplies.
-
-This power supply design differs from the proposed design in several ways.  The LM2825-5.0 was a late design change and replaced the original DC-DC converter design.  This is due to unforeseen issues with the original converter.  Because the converter design was not critical or the focus of the project, the LM2825-5.0 was worked into the design as a replacement during a PCB rework.  This substitution saved a great deal of troubleshooting time and allowed the project to be completed on time, but changed proposed cost slightly.
-
+The Main Control Panel is to be powered by the 24VAC low-voltage supply from a home's HVAC system. The 24VAC supply must be converted to the 3.3V required by the MSP430, XBee Wireless Transceiver, Sensors, and Hitachi LCD Display. To make this conversion, a rectifier and DC-DC converter will be used. The full-wave rectifier is desirable for making the conversion to DC; it requires smaller output capacitors to control output voltage ripple. A synchronous, wide input range DC-DC converter from Linear Technology (LTC3854) was chosen to complete the DC-DC conversion. The output voltage selector circuit determines the output voltage: $V_{out}=.8(1-\frac{R_1}{R_2})$. Using Linear Technology parts allows easy simulation using LTSpice. The circuit was simulated using Fig.~\ref{fig:MPPS_test} as source and load simulations. Results are shown in Fig.~\ref{fig:powersupply_simwave}.
 \begin{figure}
 \centering
-\includegraphics[width=.99\textwidth]{main_rectified_input.png}
-\caption{Rectified and filtered 24VAC input to the main panel.}
-\label{fig:main_rectified}
+\includegraphics[width=.99\textwidth]{MPPS_schem_nosim.png}
+\caption{Complete power supply design utilizing the LTC3854 DC-DC converter.}
+\label{fig:MPPS_schem_nosim}
 \end{figure}
 \begin{figure}
 \centering
-\includegraphics[width=.8\textwidth]{main_5v_output.png}
-\caption{5V output measurement from the LM2825-5.0 integrated power converter.}
-\label{fig:main_5v_output}
+\includegraphics[width=.8\textwidth]{MPPS_test.png}
+\caption{Test fixtures for simulation of the power supply.}
+\label{fig:MPPS_test}
 \end{figure}
 \begin{figure}
 \centering
-\includegraphics[width=.8\textwidth]{main_3_3v_output.png}
-\caption{3.3V output measurement from the LT1129-3.3 LDO regulator.}
-\label{fig:main_3_3v_output}
+\includegraphics[width=.99\textwidth]{Powersupply_simwave.png}
+\caption{Simulation of the input and output wave forms under various loading of $(I_{out})$.}
+\label{fig:powersupply_simwave}
 \end{figure}
-
 \paragraph{Main Panel Microcontroller}
 \begin{figure}
 \centering
@@ -118,6 +85,7 @@ This power supply design differs from the proposed design in several ways.  The 
 \label{fig:maincntl_flow}
 \end{figure}
 
+\paragraph{Main Panel Microcontroller}
 The microcontroller used will be an MSP430 microcontroller. The microcontroller must send and receive packets over the network via the wireless transceiver, read the temperature and humidity sensors, signal the central HVAC system on or off, and output to an LCD display for debugging and UI purposes. The main control panel will receive broadcast data from all of the remote temperature sensors on the network (including its own sensors). Once the microcontroller receives temperature information from each remote sensor, it determines which vents to open and close and sends data wirelessly to the desired vent controllers. The HVAC is controlled over a 2-3 wire system connected directly to the HVAC over existing house wiring.
 % Table generated by Excel2LaTeX from sheet 'Sheet1'
 \begin{table}[htbp]
@@ -132,13 +100,13 @@ The microcontroller used will be an MSP430 microcontroller. The microcontroller 
 \hline
 2 & P1.0 & LCD Register Select \bigstrut\\
 \hline
-3 & UCA0 Rxd & XBee Dout \bigstrut\\
+3 & UCA0SOMI & Xbee SPI\_MISO \bigstrut\\
 \hline
-4 & UCA0 Txd & XBee Din \bigstrut\\
+4 & UCA0SIMO & Xbee SPI\_MOSI \bigstrut\\
 \hline
 5 & P1.3 & HVAC Heat ON switch \bigstrut\\
 \hline
-6 & N/C \bigstrut\\
+6 & UCA0CLK & Xbee SPI\_Clk \bigstrut\\
 \hline
 7 & P1.5 & LCD Enable \bigstrut\\
 \hline
@@ -179,41 +147,14 @@ The Xbee transciever block is the main communication portion of the design. The 
 See \S\ref{temp_sensors} and \S\ref{humid_sensors}.
 
 \paragraph{Main Panel User Interface}
-Interfacing with the main control panel was done in two parts. An HD44780 Hitachi LCD display was used to display current system settings and temperature at the main panel. To program the thermostat, a user interface application was written in C\# in Visual Studio 2010. Users can change room priorities, temperature preferences, and whether the system is in A/C mode or Heat. 
-
-The PC application follows the flow chart in Fig.~\ref{fig:PCapp_flow}. Fig.~\ref{fig:PC_app} shows the PC application GUI, which has been tested on Windows machines only.  To communicate with the main panel, the PC must be connected to the same local network.  The PC app assembles a 10 byte message, including a unique header, which is sent to the main panel.  The message format can be seen in Fig.~\ref{fig:pcapp_message}.
-
+Interfacing with the main control panel will be done in two parts. An HD44780 Hitachi LCD display will be used to display current system settings and temperature at the main panel. To program the thermostat, a user interface application on a networked PC will be the main interface with the system. Users can change room priorities, temperature preferences, and weekly schedules via the interface. The PC application will follow the flow chart in Fig.~\ref{fig:PCapp_flow}.
+The HD44780 display is connected to the MSP430 via 6 pins: RS, EN, Bits0-3. R/W is tied low for always writing, and Vcc, Gnd and LCD power pins are connected as required. The connections can be seen in Fig.~\ref{fig:maincntl_schematic}
 \begin{figure}
 \centering
 \includegraphics[width=.4\textwidth]{PCapp_flow.pdf}
 \caption{Flow chart depicting the PC application logic flow.}
 \label{fig:PCapp_flow}
 \end{figure}
-
-
-\begin{figure}
-\centering
-\includegraphics[width=.9\textwidth]{PC_app.png}
-\caption{Screen shot of the PC App GUI.}
-\label{fig:PC_app}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=.9\textwidth]{pcapp_message.png}
-\caption{PC app control message sent to the main panel on user command.}
-\label{fig:pcapp_message}
-\end{figure}
-
-The HD44780 protocol display was realized through a UC-204A type LCD.  This LCD has built a built in backlight and is capable of displaying 4 rows of 20 characters.  It requires 5VDC to supply both the logic circuitry and the backlight (current controlled); however the logic was drivable with 3.3VDC from the MSP430 and powered with 5VDC. Fig.~\ref{fig:lcd_sample} shows the LCD with some currently displayed items.
-
-\begin{figure}
-\centering
-\includegraphics[width=.9\textwidth]{LCD_sample.png}
-\caption{UC-204A LCD displaying temperature information.  The top line is the commanded temperature in $^\circ C$, followed by the current priority room temperature.  Priority room is displayed in numeric format (the same number as was sent by the PC App).  The 3rd line is debugging information which correlates to the Wi-Fi connections of the other system components. }
-\label{fig:lcd_sample}
-\end{figure}
-
 %end main control panel design
 
 
@@ -235,6 +176,8 @@ The power source for this component is a standard AC outlet.  Like the main cont
 The MCU is a TI MSP430G2333.  It will read the temperature and humidity sensors and periodically send the data to the main controller via a Wifi network connection.  The MCU is responsible for initializing the XBee with the appropriate network configuration parameters, and reading the proper calibration parameters from the humidity sensor via the I$^2$C bus.
 \paragraph{Remote Temperature Sensor XBee Transceiver}
 The Xbee transceiver is used in the remote sensor to allow communication to the main control panel. It will be interfaced to the microcontroller via SPI port.  The Xbee will connect to a pre-determined network.
+\paragraph{Changes to Design}
+There weren't many changes made to the overall design of the temperature sensor unit. 
 %End Design
 
 %Begin Vent Controller Design
