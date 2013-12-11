@@ -1,7 +1,9 @@
 \section{Conclusion}
 \subsection{Accomplishments}
+The system was able to detect changes in the ambient temperature of each room, and open or close the vent accordingly as well as activate the heating or A/C if appropriate.  Although it was impossible to test this in a real environment, there is no reason to believe that the system would behave any differently than the simulated environment used for testing, as there are no fundamental differences between the two.
 \subsection{Uncertainties}
-\section{Ethical Considerations}
+The system was extensively tested, and no known uncertanties in its behavior remain.
+\subsection{Ethical Considerations}
 \subsubsection{Ethics}
 The Smart Climate Control System is designed to make the lives of our customers more comfortable. Although we adhered to the entire IEEE Code of Ethics one stood out as the most relevant to our project.
 \begin{quote}
@@ -10,7 +12,7 @@ To accept responsibility in making decisions consistent with the safety, health,
 We as engineers are committed to providing safe, reliable and ethical designs.  Should any unforseen danger with our system present itself, we would be ethically bound to notify our clients as soon as possible.
 
 \subsubsection{Safety}
-Electrocution: The fact that this is an electrical device brings the concern that all consumers as well as engineers may be exposed to electric shock. The highest power source we will deal with is the 120 VAC (RMS) wall outlet. While the engineers are making or testing this device they need to take safety precautions to prevent electrocution, such as the following:
+Electrocution: The fact that this is an electrical device brings the concern that all consumers as well as engineers may be exposed to electric shock. The highest power source we will deal with is the 120\,VAC (RMS) wall outlet. While the engineers are making or testing this device they need to take safety precautions to prevent electrocution, such as the following:
 \begin{enumerate}
 \item
 Ensure that all power sources are off until you are certain your system is ready to be tested.
@@ -24,8 +26,11 @@ When soldering the engineers need to be sure not to inhale the fumes from the so
 
 Since we'll be working with electricity as well as soldering irons it is possible that a fire could occur. To help prevent this occurrence the engineers will have to ensure that the power systems and soldering irons are off when not in use, and are handled properly when in use. This includes turning off everything before leaving for the day.
 
+\subsection{Future Work}
+Although the system works, and meets most of the original requirements, there is much that can be done to imporve its performance, ease of implementation, and usability.  The current system uses static IP addresses for each component.  Adding the ability to use dynamic IP addresses would simplify the task of scaling the system to larger environments.  Also, the ability to control the settings from the main panel would enhance the usability of the system. The vent controllers are battery powered, so any reduction in power consumption would be beneficial.  This could be accomplished by setting the XBee to a deeper sleep during standby. These features, while useful, were not implemented due to time constraints.
+
 %appendix
-\pagebreak
+%\pagebreak
 \begin{thebibliography}{10}
 \bibitem{1}
 \textit{IEEE Code of Ethics}, [Online]. Available: \url{http://www.ieee.org/about/corporate/governance/p7-8.html}
