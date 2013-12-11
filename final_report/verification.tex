@@ -20,6 +20,7 @@ The room temperature was measured with a Fluke 80T-150U temperature probe and wa
 The humidity sensor was not used in the final design.
 
 \subsubsection{Network}
+The temperature sensor periodically sends data packets.  These were received by the main board, and indicated in a status byte on the LCD.  Also, the packets were received by a Linux program to receive UDP packets during debugging.  When the priority room was set to `1', the temperature displayed on the LCD updated to display the reading of the remote temperature sensor unit.
 
 \subsection{Vent Control Unit}
 \subsubsection{Power Supply}
@@ -28,8 +29,10 @@ To test the output voltage of the regulator we used a multimeter and tested the 
 The voltage from the battery pack was $6.32 \pm 0.1 \volts$, which satisfies the requirement that the input voltage $4.75 \leq V_{\rm in} \leq 26$. The maximum voltage for the servo motor is 6 volts, so a 0.7\volts\ diode was used to drop the voltage within the range of the servo motor. This final voltage to the servo motor was measured to be 5.65\volts .
 
 \subsubsection{Servo Control}
+The commands to open and close the vents were sent to the vent controllers, and the output of pin P2.3 was measured on an oscilloscope. The commands were sent using a Linux program to send UDP packets.  Using the oscilloscope, the frequency was measured to be approximately 457\,Hz when an open command was sent, and approximately 247\,Hz when a close command was sent. The same commands were also sent to the complete vent controller with the servo, and the vents were observed to open and close when the appropriate commands were sent.
 
 \subsubsection{Network}
+Using a Linux program to send UDP packets, commands were sent to the vent controllers.  Using a Linux program to receive incoming UDP packets, acknowledgments were received when the commands were sent.  This can only happen if the packet were properly sent and processed, and the acknowledgment were properly sent.
 
 \subsection{Main Control Unit}
 
@@ -37,11 +40,12 @@ The voltage from the battery pack was $6.32 \pm 0.1 \volts$, which satisfies the
 The updated power supply voltage outputs were measured with an oscilloscope.  Each had $<\pm .8VDC$ ripple.  The circuit was tested under load by powering the XBee, MSP430, and LCD under normal operation. No power or thermal problems noted after running for $>30$ minutes.
 
 \subsubsection{Network}
+Using the PC application to send commands to the main board, various commands were sent and the change in settings was observed on the LCD.  The temperature sensor periodically sends temperature data to the main board, and is indicated by a status byte on the LCD.  The main board also sends commands to the vent controllers, and the vent controllers acknowledge those commands.  These acknowledgments, or a timeout, is indicated by a status byte for each vent controller on the LCD.  This data on the LCD indicates the network is working. 
 
 \subsubsection{User Interface}
 LCD turns on as required during main panel power up.  Brightness was not an issue with the $500\Omega$ resistor, and the screen was visible from $>4ft$ with default screen data as shown in the User Interface section.  The LCD displays the desired and current temperature, the priority room, and whether the system is heating or cooling as desired.
 
-The main control unit properly receives packets from the PC application.  The main panel reacted to all the user desired entries.  The user can command any temperature in farenheit or celsius, and can set HEAT or COOL.  The main panel displayed these settings.
+The main control unit properly receives packets from the PC application.  The main panel reacted to all the user desired entries.  The user can command any temperature in Fahrenheit or Celsius, and can set HEAT or COOL.  The main panel displayed these settings.
 
 \subsubsection{HVAC Control Logic}
 The HVAC system must respond to HEAT and COOL settings with respect to the current room temperatures.  The system was verified by using light bulbs to display when each system was commanded ON.  Using the PC app, we set the system to cool to $50^\circ F$, and the HVAC vents open with COOL signal sent to HVAC.  The system responded to a HEAT command by opening vents and sending the heat signal to HVAC when setting the system to $80^\circ F$.
