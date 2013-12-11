@@ -57,7 +57,7 @@ No modifications to a home's central HVAC system was desired. In the United Stat
 \subsubsection{Main Control Panel}
 The main control panel acts as master to all other components. The main control panel can be broken down into several components as shown in Fig.~\ref{fig:cntldiagram}. Fig.~\ref{fig:main_cntl_schematic} gives a closer look at the main control panel.  The main control panel was broken into smaller parts for verification reasons: HVAC system, Power Supply, Microcontroller, and XBee Wi-Fi.
 
-The main control panel was housed in a prototype box from RadioShack.  The enclosure hid much of the wires, protecting the user from the open wires, and was more aesthetically pleasing. Fig.~\ref{fig:main_panel_box} shows the completed main control panel during operation.  Fig.~\ref{fig:main_panel_apart}
+The main control panel was housed in a prototype box from RadioShack.  The enclosure hid much of the wires, protecting the user from the open wires, and was more aesthetically pleasing. Fig.~\ref{fig:main_panel_box} shows the completed main control panel during operation.  Fig.~\ref{fig:main_panel_apart} shows the main control panel removed from its case.  The LCD is connected to the main board via ribbon cable.  A separate relay control board was added and will be discussed next.
 \begin{figure}
 \centering
 \includegraphics[width=.99\textwidth]{main_cntl_schematic.png}
@@ -78,6 +78,13 @@ The main control panel was housed in a prototype box from RadioShack.  The enclo
 \caption{Disassembled main control panel, showing main board, relay board, and LCD.}
 \label{fig:main_panel_apart}
 \end{figure}
+
+The relay board was added in place of the MOSFETs originally indicated to switch on and off the HVAC system.  The MOSFETs alone turned out to not be suitable due to the source reference requirements.  An isolated design was required and designed using relays.  To overcome the high switching voltage required by the previous MOSFETs, BJTs were used to switch on and off the relays on command from the MSP430.  Fig.~\ref{fig:Relay_schem} shows the schematic used to command the HVAC system in the final design.
+
+\begin{figure}
+\centering
+\includegraphics[width=.99\textwidth]{Relay_schem.png}
+\caption{Relaying scheme used to have the MSP430 control the HVAC. Each of the 3 HVAC control wires have a duplicate of this schematic.}
 
 \paragraph{Main Panel Power Supply}
 The Main Control Panel is to be powered by the 24VAC low-voltage supply from a home's HVAC system. The 24VAC was rectified using a NTE167 bridge rectifier in KBPM package.  Filtering capacitors provided a more constant input, Fig.~\ref{fig:main_rectified}, to an integrated power supply from TI, the LM2825-5.0.  The LM2825-5.0 is a buck converter integrated into a $.6"$ DIP24 package, and provides a constant 5V output with very little loss at up to 1A.  This 5V was appropriate for powering the UC204 LCD (Hitachi HD44780 protocol; see the User Interface section) and an LT1129-3.3 LDO regulator, from Linear Technology, capable of supplying the $3.3VDC$ necessary for the XBee and UC-204A LCD (Hitachi HD44780; User Interface section). Figures~\ref{fig:main_5v_output} and~\ref{fig:main_3_3v_output} display the verified operation of the power supplies.
