@@ -34,13 +34,21 @@ The voltage from the battery pack was $6.32 \pm 0.1 \volts$, which satisfies the
 \subsection{Main Control Unit}
 
 \subsubsection{Power Supply}
+The updated power supply voltage outputs were measured with an oscilloscope.  Each had $<\pm .8VDC$ ripple.  The circuit was tested under load by powering the XBee, MSP430, and LCD under normal operation. No power or thermal problems noted after running for $>30$ minutes.
 
 \subsubsection{Network}
 
 \subsubsection{User Interface}
+LCD turns on as required during main panel power up.  Brightness was not an issue with the $500\Omega$ resistor, and the screen was visible from $>4ft$ with default screen data as shown in the User Interface section.  The LCD displays the desired and current temperature, the priority room, and whether the system is heating or cooling as desired.
+
+The main control unit properly receives packets from the PC application.  The main panel reacted to all the user desired entries.  The user can command any temperature in farenheit or celsius, and can set HEAT or COOL.  The main panel displayed these settings.
 
 \subsubsection{HVAC Control Logic}
+The HVAC system must respond to HEAT and COOL settings with respect to the current room temperatures.  The system was verified by using light bulbs to display when each system was commanded ON.  Using the PC app, we set the system to cool to $50^\circ F$, and the HVAC vents open with COOL signal sent to HVAC.  The system responded to a HEAT command by opening vents and sending the heat signal to HVAC when setting the system to $80^\circ F$.
+
+Using a hair dryer in a small enclosed box, the heating stopped and the vents closed when the temperature reached $1^\circ F$ of set value.  In non-priority rooms, the vents close when the temperature is reached.  Cooling was checked similarly by using an icepack in the small box.
 
 \subsubsection{HVAC Interface}
+After changing the control circuitry, the heating and cooling are activated when appropriate by the main panel.  Light bulbs were used to verify that the main panel output the correct voltage at correct times to the Fan and Heat/Cool systems.
 
 
