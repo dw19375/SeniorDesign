@@ -2,7 +2,7 @@
 \emph{Please see Appendix~\ref{reqtab} for a complete listing of the design requirements.}
 \subsection{Remote Temperature Sensor Unit}
 \subsubsection{Power Supply}
-To test the output voltage of the regulator we used a multimeter and tested the output both when the system was in sleep mode and when it was transmitting data. During both operation modes the voltage regulator had very little fluctuation from its output voltage value. The output voltage of the voltage regulator was measured to be 3.332 \pm 0.01\volts\ when no components were drawing power ($I=0\amps$) and under normal operating conditions, with $I\approx200\mamps$. 
+To test the output voltage of the regulator we used a multimeter and tested the output both when the system was in sleep mode and when it was transmitting data. During both operation modes the voltage regulator had very little fluctuation from its output voltage value. The output voltage of the voltage regulator was measured to be $3.332 \pm 0.01\volts$ when no components were drawing power ($I=0\amps$) and under normal operating conditions, with $I\approx200\mamps$. 
 
 \subsubsection{Sensor Data Collection}
 \paragraph{Temperature Sensor}
@@ -14,7 +14,7 @@ The humidity sensor was not used in the final design.
 \subsubsection{Sensor Accuracy}
 \paragraph{Temperature Sensor}
 % Fill in the thermometer specs
-The room temperature was measured with a Fluke $xxx$ thermometer, with an accuracy of $xxx$, and was compared to the reading of the temperature sensor.  The DS18B20 consistently read approximately $0.5^\circ$C higher than the Fluke thermometer.  This was likely due to ambient heat from the temperature sensor unit.  This was not an issue on the main board, as the DS18B20 was better isolated from the electronics.
+The room temperature was measured with a Fluke 80T-150U temperature probe and was compared to the reading of the temperature sensor.  The DS18B20 consistently read approximately $0.5^\circ$C higher than the Fluke temperature probe.  This was likely due to ambient heat from the temperature sensor unit.  This was not an issue on the main board, as the DS18B20 was better isolated from the electronics.
 
 \paragraph{Humidity Sensor}
 The humidity sensor was not used in the final design.
@@ -23,9 +23,9 @@ The humidity sensor was not used in the final design.
 
 \subsection{Vent Control Unit}
 \subsubsection{Power Supply}
-To test the output voltage of the regulator we used a multimeter and tested the output both when the system was in sleep mode and when the servo motor was in operation. During both times the voltage out of the regulator stayed fairly constant. The output voltage of the voltage regulator was measured to be 3.321 \pm 0.02\volts\ both when no components were drawing power ($I=0\amps$) and under normal operating conditions, with $I\approx200\mamps$. The $V_{\rm out-ripple}$ also passed its test.
+To test the output voltage of the regulator we used a multimeter and tested the output both when the system was in sleep mode and when the servo motor was in operation. During both times the voltage out of the regulator stayed fairly constant. The output voltage of the voltage regulator was measured to be $3.321 \pm 0.02\volts$ both when no components were drawing power ($I=0\amps$) and under normal operating conditions, with $I\approx200\mamps$. The $V_{\rm out-ripple}$ also passed its test.
 
-The voltage from the battery pack was 6.32 \pm 0.1 \volts\, which satisfies the requirement that the input voltage $4.75 \leq V_{\rm in} \leq 26$. The Max voltage for the servo motor is 6 volts so a 0.7\volt\ diode was used to drop the voltage within the range of the servo motor. This final voltage to the servo motor was measured to be 5.65\volts\.
+The voltage from the battery pack was $6.32 \pm 0.1 \volts$, which satisfies the requirement that the input voltage $4.75 \leq V_{\rm in} \leq 26$. The maximum voltage for the servo motor is 6 volts, so a 0.7\volts\ diode was used to drop the voltage within the range of the servo motor. This final voltage to the servo motor was measured to be 5.65\volts .
 
 \subsubsection{Servo Control}
 
