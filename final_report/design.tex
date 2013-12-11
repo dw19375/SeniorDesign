@@ -37,8 +37,8 @@ multiple remote temperature sensors and vent controllers, as shown in Fig.~\ref{
 The overall system will consist of one main control panel, a central HVAC system, and any number of remote temperature sensors and duct vent controllers.  At least one remote temperature sensor is required for the system to be ``smart'', such that it will be able to detect temperatures in rooms other than where the normal thermostat (main control panel) is located.  The duct vent controllers also follow a similar logic, as many duct controllers would be used as desired to control air flow to desired rooms, but at least two are required to make the system work as intended.
 %There are several components used in many of the components: temperature and humidity sensors, microcontrollers, and wireless transceivers.
 \paragraph{Temperature Sensors}
-\label{Temp Sensors}
-An LM35 temperature sensor is used to get an accurate reading of temperature in all components. The sensors will be read by the microcontrollers and used along with humidity sensors to determine HVAC on/off state and vents open/closed state.
+\label{temp_sensors}
+A DS18B20 temperature sensor is used to get an accurate reading of temperature in all components. The sensors will be read by the microcontrollers and used along with humidity sensors to determine HVAC on/off state and vents open/closed state.
 \paragraph{Humidity Sensors}
 \label{humid_sensors}
 An HH10D humidity sensor will be used to measure the relative humidity around the sensor.  The humidity reading will be used along with the temperature reading to set the temperatures in each room.
@@ -67,14 +67,14 @@ The main control panel was housed in a prototype box from RadioShack.  The enclo
 
 \begin{figure}
 \centering
-\includegraphics[width=.99\textwidth]{main_panel_box.png}
+\includegraphics[width=.99\textwidth]{main_panel_box.jpg}
 \caption{Main control panel inside its enclosure, operating.}
 \label{fig:main_panel_box}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=.99\textwidth]{main_panel_apart.png}
+\includegraphics[height=.9\textheight]{main_panel_apart.jpg}
 \caption{Disassembled main control panel, showing main board, relay board, and LCD.}
 \label{fig:main_panel_apart}
 \end{figure}
@@ -186,7 +186,7 @@ The PC application follows the flow chart in Fig.~\ref{fig:PCapp_flow}. Fig.~\re
 
 \begin{figure}
 \centering
-\includegraphics[width=.9\textwidth]{PC_app.png}
+\includegraphics[width=.9\textwidth]{PC_App.png}
 \caption{Screen shot of the PC App GUI.}
 \label{fig:PC_app}
 \end{figure}
@@ -202,7 +202,7 @@ The HD44780 protocol display was realized through a UC-204A type LCD.  This LCD 
 
 \begin{figure}
 \centering
-\includegraphics[width=.9\textwidth]{LCD_sample.png}
+\includegraphics[width=.9\textwidth]{LCD_sample.jpg}
 \caption{UC-204A LCD displaying temperature information.  The top line is the commanded temperature in $^\circ C$, followed by the current priority room temperature.  Priority room is displayed in numeric format (the same number as was sent by the PC App).  The 3rd line is debugging information which correlates to the Wi-Fi connections of the other system components. }
 \label{fig:lcd_sample}
 \end{figure}
@@ -214,7 +214,7 @@ The HD44780 protocol display was realized through a UC-204A type LCD.  This LCD 
 %Begin Remote Temperature Sensor Design
 \begin{figure} [htb]
 \centering
-\includegraphics[width=.99\textwidth]{Temperature_Sensor.JPG}
+\includegraphics[width=.99\textwidth]{Temperature_Sensor.jpg}
 \caption{Temperature Control System schematic.}
 \label{fig:Temperature_System}
 \end{figure}
@@ -233,7 +233,7 @@ The Xbee transceiver is used in the remote sensor to allow communication to the 
 %Begin Vent Controller Design
 \begin{figure} [htb]
 \centering
-\includegraphics[width=.99\textwidth]{Vent_System.JPG}
+\includegraphics[width=.99\textwidth]{Vent_System.jpg}
 \caption{Vent Control System schematic.}
 \label{fig:Vent_System}
 \end{figure}
